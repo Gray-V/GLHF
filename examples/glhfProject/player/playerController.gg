@@ -13,4 +13,3 @@ end default
 Player:player1
     sprite = "character.png"
 end player1
-

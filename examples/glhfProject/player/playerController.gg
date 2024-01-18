@@ -1,0 +1,16 @@
+--comment
+---multi 
+line
+---
+
+
+input: default
+    jump = "space"
+    move = "keysDefault"
+
+end default
+
+Player:player1
+    sprite = "character.png"
+end player1
+

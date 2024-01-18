@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "mocha"
+    "test": "c8 node_modules/.bin/mocha"
   },
   "author": "Grayson von Goetz und Schwanenfliess, Matthew Lee, Aiden McDougald, Vivek Dhingra",
   "license": "ISC",

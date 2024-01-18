@@ -1,6 +1,6 @@
-import assert from "mocha";
+import assert from "assert";
 describe('compiler', () => {
-    it("should output a link", () => {
-        assert.equal(true, true);
+    it("should be green :)", () => {
+        assert.equal(1, 1);
     }
 )})

@@ -1,1 +1,16 @@
-console.print()
+Function add(x,y) --untyped function
+    return(x+y) --return statement
+end add
+
+Function multiply(x,y)
+    return(x*y)
+end multiply
+
+add(1,2) --function call
+multiply(3,5)
+
+
+print(5/2) --division
+print(2-2) --subtraction
+
+

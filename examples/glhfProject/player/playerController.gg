@@ -4,12 +4,13 @@ line
 ---
 
 
-input: default
+Input default()
     jump = "space"
-    move = "keysDefault"
+    move = "keys_default"
 
 end default
 
-Player:player1
+Player player_1()
     sprite = "character.png"
+    input: Input = default() --example of optional static typing
 end player1

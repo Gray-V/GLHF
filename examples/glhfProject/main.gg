@@ -1,5 +1,19 @@
-gameloop: main
-    load(file.parent.settings.window) --comes from settings.gg
-    Spawn(parent.player.playerController.player1)
+Gameloop intro()
+    load()
+        file.parent.start_menu
+    end load
+    ~on_click
+        start_button -> main()
+        settings_button ->
+            settings()
+end on_quit
 
-end main
+
+Gameloop main()
+    load()
+        file.parent.settings.window --comes from settings.gg
+    end load
+    Wait(5) --milliseconds
+    spawn(parent.player.player_controller.player1)
+
+end on_quit

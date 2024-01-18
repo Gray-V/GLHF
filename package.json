@@ -1,0 +1,11 @@
+{
+  "name": "glhf",
+  "version": "1.0.0",
+  "description": "This is a handwritten interpreter for GLHF",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Grayson von Goetz und Schwanenfliess, Matthew Lee, Aiden McDougald, Vivek Dhingra",
+  "license": "ISC"
+}

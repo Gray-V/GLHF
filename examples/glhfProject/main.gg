@@ -1,5 +1,5 @@
 gameloop: main
     load(file.parent.settings.window) --comes from settings.gg
-    Spawn(main.parent.player.player1)
+    Spawn(parent.player.playerController.player1)
 
 end main

@@ -1,0 +1,9 @@
+array_1 = ["hello","goodbye","run away", 1] --mutable object
+
+array_1.add("2") --adds to the end of the array_1
+
+array_1.insert(1, "hi") -- inserts at index 1
+
+array_1[1] = "hello" --over writes index 1
+
+array_1.delete(2) --deletes index 2 and moves everything left

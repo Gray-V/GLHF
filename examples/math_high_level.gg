@@ -1,0 +1,5 @@
+print(2**2) --exponential evaulates to 4
+print(-2**2) --exponential evaulates to 4
+
+print(3%2) --modulos evaulates to 1
+

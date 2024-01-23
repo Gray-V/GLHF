@@ -1,5 +1,6 @@
 --comment
----multi 
+---
+multi 
 line
 ---
 
@@ -12,5 +13,5 @@ end default
 
 Player player_1()
     sprite = "character.png"
-    input: Input = default() --example of optional static typing
-end player1
+    input = default()
+end player_1

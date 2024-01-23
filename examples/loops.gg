@@ -1,0 +1,8 @@
+Function find_name
+    load() --only runs once
+        count = 0
+    end load
+
+    print("Hello world")
+    count += 1
+end count == 5

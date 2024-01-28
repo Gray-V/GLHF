@@ -29,7 +29,7 @@ let cars = cars.at(2);
 array_1 = ["hello","goodbye","run away", 1]
 array_1[2]
 
-
+```
 ### Python
 
 ```

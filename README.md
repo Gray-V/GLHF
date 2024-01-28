@@ -20,56 +20,43 @@ GLHF is a language not only for game developers, but also by game developers. De
 ### Java Script
 
 ```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
+const cars = ["Saab", "Volvo", "BMW"];\
+let cars = cars.at(2);
 ```
 
 ### GLHF
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
 ```
+array_1 = ["hello","goodbye","run away", 1]
+array_1[2]
 
 
-### C#
+### Python
 
-```c#
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
+```
+i = 1
+while i < 6:
+  print(i)
+  i += 1
 ```
 
 ### GLHF
-```javascript
-import Component from 'my-project'
+```
+Function find_name
+    load() --only runs once
+        count = 0
+    end load
 
-function App() {
-  return <Component />
-}
+    print("Hello world")
+    count += 1
+end count == 5
 ```
 
 ### Python
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
+```
+#this is a comment
 ```
 
 ### GLHF
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
+```
+--this is a comment
 ```

@@ -7,7 +7,7 @@
   "scripts": {
     "test": "c8 node_modules/.bin/mocha"
   },
-  "author": "Grayson von Goetz und Schwanenfliess, Matthew Lee, Aiden McDougald, Vivek Dhingra",
+  "author": "Grayson von Goetz und Schwanenfliess, Matthew Lee, Aiden McDougald, Vivek Dhingra, Lawrence Benitez",
   "license": "ISC",
   "dependencies": {
     "c8": "^9.1.0",

@@ -1,5 +1,7 @@
-dict_1= <
+dict_1 = <
 "hello": 1,
 "cars": "black",
 1: "socks"
->g
+>
+
+dict_2 = <"hello" : "world", 2 : "wow", 2.02 : true>

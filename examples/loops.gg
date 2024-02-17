@@ -1,4 +1,4 @@
-Function find_name
+Function find_name()
     load() --only runs once
         count = 0
     end load
@@ -6,3 +6,7 @@ Function find_name
     print("Hello world")
     count += 1
 end count == 5
+
+for (i = 0, i++)
+    print("HAI")
+end i < array.length

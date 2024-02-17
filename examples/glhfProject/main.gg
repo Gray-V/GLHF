@@ -1,19 +1,20 @@
 Gameloop intro()
-    load()
+    Function load()
         File.parent.start_menu
     end load
     ~on_click
-        start_button -> main()
-        settings_button ->
+        "start_button" -> main()
+        "settings_button" ->
             settings()
+    end ~
 end on_quit
 
 
 Gameloop main()
-    load()
-        File.Parent.settings.default() --comes from settings.gg
+    Function load()
+        File.Parent.settings.default --comes from settings.gg
     end load
     Wait(5) --milliseconds
-    spawn(Parent.player.player_controller.player1)
+    spawn(File.Parent.player.player_controller.player1)
 
 end on_quit

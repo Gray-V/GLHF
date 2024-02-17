@@ -31,6 +31,7 @@ GLHF {
   	Exp6      = Exp7 "**" Exp6                                -- binary
                   | Exp7
     Exp7	  = num
+                  | Path
                   | true
                   | false
                   | string

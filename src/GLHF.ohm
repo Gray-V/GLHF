@@ -47,7 +47,7 @@ GLHF {
     Path =  "File." NonemptyListOf<(~glhf_end idchar)*, ".">
 	Array = "[" ListOf<Exp, ","> "]"
     Dictionary = "<"  ListOf<Dictionary_format, ","> ">"
-    Dictionary_format = Exp ":" Exp
+    Dictionary_format = Exp ":" Exp7
 
 
 

@@ -1,11 +1,11 @@
 GLHF {
     Program = Stmt*
-    Stmt = Ass														   --ass
-    	 	 | builtin_types id Params Block glhf_end Exp		--function
-             | enum Exp Enum_Block glhf_end enum						 --enum
-             | Path															--path
-             | Call															--call
-             | Method 													--method
+    Stmt = Ass														   -- ass
+         | builtin_types id Params Block glhf_end Exp		           -- function
+         | enum Exp Enum_Block glhf_end enum						   -- enum
+         | Path														   -- path
+         | Call														   -- call
+         | Method 													   -- method
 
 
          
@@ -16,7 +16,7 @@ GLHF {
     Params = "(" ListOf<(Ass | id), ","> ")"
     
     Exp       = ("-" | "!") Exp6                              -- unary
-                  | Exp1 "?" Exp1 ":" Exp                         -- ternary
+                  | Exp1 "?" Exp1 ":" Exp                     -- ternary
                   | Exp1
   	Exp1      = Exp1 "||" Exp2                                -- binary
                   | Exp2
@@ -38,8 +38,8 @@ GLHF {
                   | Index
                   | Array
                   | Dictionary
-                  | Call                                           -- call
-                  | id                                              -- id
+                  | Call                                        -- call
+                  | id                                          -- id
                   | "(" Exp ")"                                 -- parens
     
 	Call = id "(" ListOf<Exp, ","> ")"

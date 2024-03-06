@@ -22,7 +22,7 @@ GLHF {
                   | Exp2
   	Exp2      = Exp2 "&&" Exp3                                -- binary
                   | Exp3
-  	Exp3      = Exp4 ("<="|"<"|"=="|"!="|">="|">") Exp4       -- binary
+  	Exp3      = Exp4 ("<="|~"<<" "<"|"=="|"!="|">="|~">>" ">") Exp4       -- binary
                   | Exp4
   	Exp4      = Exp4 ("+" | "-") Exp5                         -- binary
                   | Exp5
@@ -47,8 +47,8 @@ GLHF {
     Index = id "[" (string | num*) "]"
     Path =  "File." NonemptyListOf<(~glhf_end idchar)*, ".">
 	Array = "[" ListOf<Exp, ","> "]"
-    Dictionary = "<"  ListOf<Dictionary_format, ","> ">"
-    Dictionary_format = Exp ":" Exp7
+    Dictionary = "<<"  ListOf<Dictionary_format, ","> ">>"
+    Dictionary_format = Exp ":" Exp
 
 
 

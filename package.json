@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "c8": "^9.1.0",
+    "graph-stringify": "^1.1.0",
     "mocha": "^10.2.0",
     "ohm-js": "^17.1.0"
   }

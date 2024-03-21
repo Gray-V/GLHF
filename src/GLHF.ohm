@@ -17,8 +17,8 @@ GLHF {
     Params     = "(" ListOf<(Ass | id), ","> ")"
     For        = for "(" Ass "," OpAss ")" Block glhf_end Exp 	          --increment
     		   | for id in (id | Index) Block glhf_end for				  --Iterable
-    Return     = return Exp 		--something
-    		   | return 	--nothing
+    Return     = return Exp 		                                      --something
+    		   | return 	                                              --nothing
     
     Exp       = ("-" | "!") Exp6                                          -- unary
               | Exp1 "?" Exp1 ":" Exp                                     -- ternary

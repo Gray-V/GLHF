@@ -7,6 +7,10 @@ Function find_name()
     count += 1
 end count == 5
 
-for (i = 0, i++)
+for (i = 0, i += 1)
     print("HAI")
 end i < array.length
+
+for e in array
+    
+end for

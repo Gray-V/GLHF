@@ -1,73 +1,95 @@
 GLHF {
     Program = Stmt*
-    Stmt = Ass														   -- ass
-         | builtin_types id Params Block glhf_end Exp		           -- function
-         | enum Exp Enum_Block glhf_end enum						   -- enum
-         | Path														   -- path
-         | Call														   -- call
-         | Method 													   -- method
+    Stmt = Ass														    -- ass
+         | builtin_types id Params Block glhf_end Exp		            -- function
+         | enum Exp Enum_Block glhf_end enum						    -- enum
+         | For															--for
+         | Path														    -- path
+         | Call														    -- call
+         | Method 													    -- method
+         | OpAss													    --OperatorAssignment
+         | Print														--Print
+         | break							                            --break
+         | Return 							                            --return
+         | continue							                            --continue
 
 
          
          
-    Block = Stmt*  
-    Enum_Block = ((string | true | false) "->" Exp)*
-    Ass = (Index | id ) "=" Exp
-    Params = "(" ListOf<(Ass | id), ","> ")"
+    Block      = Stmt*  
+    Enum_Block = ((num | id | Index | string | true | false) "->" Exp)*
+    Ass        = (Index | id ) "=" Exp
+    Params     = "(" ListOf<(Ass | id), ","> ")"
+    For        = for "(" Ass "," OpAss ")" Block glhf_end Exp 	          --increment
+    		   | for id in id Block glhf_end for						  --Iterable
+    Return     = return Exp 		--something
+    		   | return 	--nothing
     
-    Exp       = ("-" | "!") Exp6                              -- unary
-                  | Exp1 "?" Exp1 ":" Exp                     -- ternary
-                  | Exp1
-  	Exp1      = Exp1 "||" Exp2                                -- binary
-                  | Exp2
-  	Exp2      = Exp2 "&&" Exp3                                -- binary
-                  | Exp3
+    Exp       = ("-" | "!") Exp6                                          -- unary
+              | Exp1 "?" Exp1 ":" Exp                                     -- ternary
+              | Exp1
+  	Exp1      = Exp1 "||" Exp2                                            -- binary
+              | Exp2
+  	Exp2      = Exp2 "&&" Exp3                                            -- binary
+              | Exp3
   	Exp3      = Exp4 ("<="|~"<<" "<"|"=="|"!="|">="|~">>" ">") Exp4       -- binary
-                  | Exp4
-  	Exp4      = Exp4 ("+" | "-") Exp5                         -- binary
-                  | Exp5
-  	Exp5      = Exp5 ("*" | "/" | "%") Exp6                   -- binary
-                  | Exp6
-  	Exp6      = Exp7 "**" Exp6                                -- binary
-                  | Exp7
+              | Exp4
+  	Exp4      = Exp4 ("+" | "-") Exp5                                     -- binary
+              | Exp5
+  	Exp5      = Exp5 ("*" | "/" | "%") Exp6                               -- binary
+              | Exp6
+  	Exp6      = Exp7 "**" Exp6                                            -- binary
+              | Exp7
     Exp7	  = num
-                  | Path
-                  | true
-                  | false
-                  | string
-                  | Index
-                  | Array
-                  | Dictionary
-                  | Call                                        -- call
-                  | id                                          -- id
-                  | "(" Exp ")"                                 -- parens
+              | Path
+              | Wait
+              | true
+              | false
+              | none
+              | string
+              | Index
+              | Array
+              | Dictionary
+              | Call                                                     -- call
+              | id                                                       -- id
+              | "(" Exp ")"                                              -- parens
     
-	Call = id "(" ListOf<Exp, ","> ")"
-    Method = id "." Call
-    Index = id "[" (string | num*) "]"
-    Path =  "File." NonemptyListOf<(~glhf_end idchar)*, ".">
-	Array = "[" ListOf<Exp, ","> "]"
-    Dictionary = "<<"  ListOf<Dictionary_format, ","> ">>"
+	OpAss             = id ("+=" | "-=" | "*=" | "/=" | "%=" | "^=" ) Exp
+    Call              = id "(" ListOf<Exp, ","> ")"
+    Method            = (id | Index) "." (Call | id | Index)
+    Print             = print "(" ListOf<Exp, ","> ")"
+    Wait              = wait "(" num ")"
+    Index             = id "[" (string | num*) "]"
+    Path              = "File." NonemptyListOf<(~glhf_end idchar)*, ".">
+	Array             = "[" ListOf<Exp, ","> "]"
+    Dictionary        = "<<"  ListOf<Dictionary_format, ","> ">>"
     Dictionary_format = Exp ":" Exp
 
 
 
-	num       = digit+ ("." digit+)?
-    function  = "Function" ~idchar
-    enum	 = "~"
-    true      = "true" ~idchar
-    false     = "false" ~idchar
-    print     = "print" ~idchar
-    glhf_end  = "end" ~idchar
-    gameloop  = "Gameloop" ~idchar
-    input = "Input" ~idchar
-    player = "Player" ~idchar
-    idchar    = letter | digit | "_"
+	num           = digit+ ("." digit+)?
+    function      = "Function" ~idchar
+    enum	      = "~"
+    true          = "true" ~idchar
+    false         = "false" ~idchar
+    print         = "print" ~idchar
+    wait          = "wait" ~idchar
+    none          = "None" ~idchar
+    break         = "break" ~idchar
+    return        = "return" ~idchar
+    continue      = "continue" ~idchar
+    for           = "for" ~idchar
+    in            = "in" ~idchar
+    glhf_end      = "end" ~idchar
+    gameloop      = "Gameloop" ~idchar
+    input         = "Input" ~idchar
+    player        = "Player" ~idchar
+    idchar        = letter | digit | "_"
     builtin_types = gameloop | function | input | player
-    keyword   = builtin_types | true | false | glhf_end | enum
-    string = ("\"" | "'") (~ ("\"" | "'") any)* ("\"" | "'")
-    id        = ~keyword letter idchar*
-    space    +=  "---" (~"---" any)* "---" --multiline_comment
-    				|"--" (~("--" | "\n") any)*                              -- comment
+    keyword       = builtin_types | true | false | glhf_end | enum | wait | print | none | break | return | continue | for | in
+    string        = ("\"" | "'") (~ ("\"" | "'") any)* ("\"" | "'")
+    id            = ~keyword letter idchar*
+    space        +=  "---" (~"---" any)* "---"                             --multiline_comment
+    		      |"--" (~("--" | "\n") any)*                              -- comment
 
 }

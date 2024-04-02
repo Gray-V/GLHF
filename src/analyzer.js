@@ -84,10 +84,13 @@ export default function analyze(match) {
       return core.program(statements.children.map(s => s.rep()))
     },
 
-    // Block(statements) {
-    //   return statements.children.map(s => s.rep())
-    //   //ADD BREAK RETURN CONTINUE CHECKS
-    // },
+    Block(statements, condOPs) {
+      if (condOPs.children.length > 0) {
+        return core.block(statements.rep(), condOPs.children.map(c => c.rep()))
+      }
+      return statements.children.map(s => s.rep())
+      //ADD BREAK RETURN CONTINUE CHECKS
+    },
 
     // EnumBlock(_open, expression, _arrow, Exp, _close){
     //   return core.enumBlock(expression.sourceString, Exp.rep())
@@ -213,6 +216,42 @@ export default function analyze(match) {
       mustBothHaveTheSameType(left, right, { at: powerOp })
       return core.binary(op, left, right, left.type)
     },
-    // Exp7?
+
+    Exp7_parens(_open, expression, _close) {
+      return expression.rep()
+    },
+
+    Exp7_id(id) {
+      // When an id appears in an expression, it had better have been declared
+      const entity = context.lookup(id.sourceString)
+      mustHaveBeenFound(entity, id.sourceString, { at: id })
+      return entity
+    },
+
+    true(_) {
+      return true
+    },
+
+    false(_) {
+      return false
+    },
+
+    intlit(_digits) {
+      // Carlos ints will be represented as plain JS bigints
+      return BigInt(this.sourceString)
+    },
+
+    floatlit(_whole, _point, _fraction, _e, _sign, _exponent) {
+      // Carlos floats will be represented as plain JS numbers
+      return Number(this.sourceString)
+    },
+
+    stringlit(_openQuote, _chars, _closeQuote) {
+      // Carlos strings will be represented as plain JS strings, including
+      // the quotation marks
+      return this.sourceString
+    },
   })
+
+  return builder(match).rep()
 }

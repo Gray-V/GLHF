@@ -84,14 +84,15 @@ export default function analyze(match) {
       return core.program(statements.children.map(s => s.rep()))
     },
 
-    Block(statements) {
-      return statements.children.map(s => s.rep())
-      //ADD BREAK RETURN CONTINUE CHECKS
-    },
+    // Block(statements) {
+    //   return statements.children.map(s => s.rep())
+    //   //ADD BREAK RETURN CONTINUE CHECKS
+    // },
 
-    EnumBlock(_open, expression, _arrow, Exp, _close){
-      return core.enumBlock(expression.sourceString, Exp.rep())
-    },
+    // EnumBlock(_open, expression, _arrow, Exp, _close){
+    //   return core.enumBlock(expression.sourceString, Exp.rep())
+    //   //NOT CORRECT, THERE IS NO ENUMBLOCK IN CORE YET
+    // },
 
     Ass(relid, _eq, exp) {
       const initializer = exp.rep()
@@ -105,25 +106,36 @@ export default function analyze(match) {
     Params(_open, paramList, _close){
       return paramList.asIteration().children.map(p => p.rep())
     },
+    
+    //FOR LOOPS DO NO WORK, PLEASE CHANGE TO FIT LANGUAGE
+    // ForIncrement(_for, id, exp1, _comma, exp2, _close, block, glhf_end, exp3) {
+    //   const [low, high] = [exp1.rep(), exp2.rep()]
+    //   mustHaveIntegerType(low, { at: exp1 })
+    //   mustHaveIntegerType(high, { at: exp2 })
+    //   const iterator = core.variable(id.sourceString, INT, true)
+    //   context = context.newChildContext({ inLoop: true })
+    //   context.add(id.sourceString, iterator)
+    //   const body = block.rep()
+    //   context = context.parent
+    //   return core.forRangeStatement(iterator, low, op.sourceString, high, body)
+    // },
 
-    ForIncrement(){
-      
+    // ForIterate(_for, _open, id, _in, exp, block, glhf_end, _for) {
+    //   const collection = exp.rep()
+    //   mustHaveAnArrayType(collection, { at: exp })
+    //   const iterator = core.variable(id.sourceString, true, collection.type.baseType)
+    //   context = context.newChildContext({ inLoop: true })
+    //   context.add(iterator.name, iterator)
+    //   const body = block.rep()
+    //   context = context.parent
+    //   return core.forStatement(iterator, collection, body)
+    // },
+
+    ReturnSomething(exp){
+      return core.returnStatement(exp)
     },
 
-    ForIterate(){
-
-    },
-
-    ReturnSomething(){
-
-    },
-
-    ReturnNothing(){
-
-    },
-
-
-    ExpUnary(_open, unaryOp, _close, exp6){
+    ExpUnary(_open, unaryOp, _close, exp){
       const [op, operand] = [unaryOp.sourceString, exp.rep()]
       let type
       if (op === "-") {

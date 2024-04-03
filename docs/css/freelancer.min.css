@@ -334,8 +334,6 @@ header.masthead h2 {
 	margin: 0;
 	-webkit-transition: top .3s ease, opacity .3s ease;
 	transition: top .3s ease, opacity .3s ease;
-	vertical-align: middle;
-	vertical-align: baseline;
 	opacity: 0
 }
 

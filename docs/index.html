@@ -178,26 +178,38 @@
         <hr class="star-light mb-5" />
         <div class="row">
           <div class="col-sm-12 col-lg-6">
-            <h3 class="text-center text-uppercase" style="color: #f2e3cc">Hello World</h3>
+            <h3 class="text-center text-uppercase" style="color: #f2e3cc">Math</h3>
             <div class="row">
               <div class="offset-sm-3 col-sm-6 col-lg-8 offset-lg-4">
                 <pre><code style="color: #f2e3cc">
-ahoy “world!”
+Function add(x,y) --untyped function
+    return(x+y) --return statement
+end add
+
+Function multiply(x,y)
+    return(x*y)
+end multiply
+
+add(1,2) --function call
+multiply(3,5)
+
+print(5/2) --division
+print(2-2) --subtraction
                 </code></pre>
               </div>
             </div>
           </div>
           <div class="col-sm-12 col-lg-6">
             <h3 class="text-center text-uppercase" style="color: #f2e3cc">
-                Even Or Odd
+                High Level Math
             </h3>
             <div class="row">
               <div class="offset-sm-3 col-sm-8 col-lg-8 offset-lg-4">
                 <pre><code style="color: #f2e3cc">
-captain evenOrOdd(int x) -> booty {
-    x = -14
-    anchor x % 2 == 0
-}
+print(2**2) --exponential evaulates to 4
+print(-2**2) --exponential evaulates to 4
+
+print(3%2) --modulos evaulates to 1
                 </code></pre>
               </div>
             </div>
@@ -206,44 +218,43 @@ captain evenOrOdd(int x) -> booty {
         <div class="row">
           <div class="col-sm-12 col-lg-6">
             <h3 class="text-center text-uppercase" style="color: #f2e3cc">
-              For Loops
+              Loops
             </h3>
             <div class="row">
               <div class="offset-sm-3 col-sm-6 col-lg-8 offset-lg-4">
                 <pre><code style="color: #f2e3cc">
-vargh pirates = [1, 4, 3, 4, -1]
-chase int i = 0 until 5 {
-    yo pirates[i] < 0 {
-        ahoy "invalid pirate!"
-        maroon
-    } yo ho pirates[i] % 2 == 1 {
-        ahoy "found an odd pirate!"
-        ahoy pirates[i]
-    }
-}
-[int] numbers = [1, 2, 3]
-chase vargh x through numbers {
-    ahoy evenOrOdd(x)
-}
+Function find_name()
+    load() --only runs once
+        count = 0
+    end load
+
+    print("Hello world")
+    count += 1
+end count == 5
+
+for (i = 0, i += 1)
+    print("HAI")
+end i < array.length
+
+for e in array
+    
+end for
                   </code></pre>
               </div>
             </div>
           </div>
           <div class="col-sm-12 col-lg-6">
-            <h3 class="text-center text-uppercase" style="color: #f2e3cc">While Loops</h3>
+            <h3 class="text-center text-uppercase" style="color: #f2e3cc">Dictionaries</h3>
             <div class="row">
               <div class="offset-sm-4 col-sm-8 offset-lg-4 col-lg-8">
                 <pre><code style="color: #f2e3cc">
-vargh age = 10 
-vargh ageLimit = 18
-parrot age < ageLimit {
-    ahoy "yer a little lad?" 
-    yo aye {
-        ahoy age < ageLimit ? "aye" : "nay"
-    }
-    age = age + 1
-}
-ahoy "yer a pirate!"
+dict_1 = <<
+"hello": 1 + 3,
+"cars": "black",
+1: "socks"
+>>
+
+dict_2 = <<"hello" : "world", 2 : "wow", 2.02 : true>>
                   </code></pre>
               </div>
             </div>
@@ -252,44 +263,46 @@ ahoy "yer a pirate!"
         <div class="row">
           <div class="col-sm-12 col-lg-6">
             <h3 class="text-center text-uppercase" style="color: #f2e3cc">
-              If Statements
+              Settings
             </h3>
             <div class="row">
               <div class="offset-sm-3 col-sm-6 col-lg-9 offset-lg-3">
                 <pre><code style="color: #f2e3cc">
-    yo x < 10 {
-        anchor 1
-    } yo ho (x < 20) {
-        anchor -1
-    } ho {
-        anchor 0
-    }
+      Window default()
+          width = 200
+          height = 100
+      end default
                 </code></pre>
               </div>
             </div>
           </div>
           <div class="col-sm-12 col-lg-6">
             <h3 class="text-center text-uppercase" style="color: #f2e3cc">
-              Classes
+              Main
             </h3>
             <div class="row">
               <div class="offset-sm-4 col-sm-8 offset-lg-2 col-lg-10">
                 <pre><code style="color: #f2e3cc">
-            ship Rectangle {
-                build (doubloon h, int w) {
-                    doubloon me.height = h
-                    int me.width = w
-                }
-                captain getWidth() -> int {
-                    anchor me.width
-                }
-                captain setWidth(int newWidth) -> none {
-                    me.width = newWidth
-                }
-            }
-            Rectangle p = new Rectangle(3,4)
-            ahoy p.getWidth()
-            p.setWidth(15)
+Gameloop intro()
+    Function load()
+        File.parent.start_menu
+    end load
+    ~on_click
+        "start_button" -> main()
+        "settings_button" ->
+            settings()
+    end ~
+end on_quit
+
+
+Gameloop main()
+    Function load()
+        File.Parent.settings.default --comes from settings.gg
+    end load
+    Wait(5) --milliseconds
+    spawn(File.Parent.player.player_controller.player1)
+
+end on_quit
               </code></pre>
               </div>
             </div>

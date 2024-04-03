@@ -91,10 +91,9 @@ export default function analyze(match) {
       return statements.children.map(s => s.rep())
     },
 
-    // EnumBlock(_open, expression, _arrow, Exp, _close){
-    //   return core.enumBlock(expression.sourceString, Exp.rep())
-    //   //NOT CORRECT, THERE IS NO ENUMBLOCK IN CORE YET
-    // },
+    EnumBlock(_open, expression, _arrow, Exp, _close){  
+      return core.enumBlock(expression.sourceString, Exp.rep())
+    },
 
     Ass(relid, _eq, exp) {
       const initializer = exp.rep()

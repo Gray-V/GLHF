@@ -94,6 +94,10 @@ export function program(statements) {
   export function forStatement(iterator, collection, body) {
     return { kind: "ForStatement", iterator, collection, body }
   }
+
+  export function forRangeStatement(iterator, low, high, body) {
+    return { kind: "ForRangeStatement", iterator, low, high, body }
+  }
   
   export function conditional(test, consequent, alternate, type) {
     return { kind: "Conditional", test, consequent, alternate, type }

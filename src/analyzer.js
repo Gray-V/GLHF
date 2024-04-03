@@ -89,7 +89,6 @@ export default function analyze(match) {
         return core.block(statements.rep(), condOPs.children.map(c => c.rep()))
       }
       return statements.children.map(s => s.rep())
-      //ADD BREAK RETURN CONTINUE CHECKS
     },
 
     // EnumBlock(_open, expression, _arrow, Exp, _close){
@@ -109,30 +108,38 @@ export default function analyze(match) {
     Params(_open, paramList, _close){
       return paramList.asIteration().children.map(p => p.rep())
     },
-    
-    //FOR LOOPS DO NO WORK, PLEASE CHANGE TO FIT LANGUAGE
-    // ForIncrement(_for, id, exp1, _comma, exp2, _close, block, glhf_end, exp3) {
-    //   const [low, high] = [exp1.rep(), exp2.rep()]
-    //   mustHaveIntegerType(low, { at: exp1 })
-    //   mustHaveIntegerType(high, { at: exp2 })
-    //   const iterator = core.variable(id.sourceString, INT, true)
-    //   context = context.newChildContext({ inLoop: true })
-    //   context.add(id.sourceString, iterator)
-    //   const body = block.rep()
-    //   context = context.parent
-    //   return core.forRangeStatement(iterator, low, op.sourceString, high, body)
-    // },
 
-    // ForIterate(_for, _open, id, _in, exp, block, glhf_end, _for) {
-    //   const collection = exp.rep()
-    //   mustHaveAnArrayType(collection, { at: exp })
-    //   const iterator = core.variable(id.sourceString, true, collection.type.baseType)
-    //   context = context.newChildContext({ inLoop: true })
-    //   context.add(iterator.name, iterator)
-    //   const body = block.rep()
-    //   context = context.parent
-    //   return core.forStatement(iterator, collection, body)
-    // },
+    ForIncrement(_for, _open, id, exp, _close, block, _glhf_end, endExp) {
+      const [low, high] = [exp.rep(), endExp.rep()]
+      mustHaveIntegerType(low, { at: exp1 })
+      mustHaveIntegerType(high, { at: endExp })
+      const iterator = core.variable(id.sourceString, INT, true)
+      context = context.newChildContext({ inLoop: true })
+      context.add(id.sourceString, iterator)
+      const body = block.rep()
+      context = context.parent
+      return core.forRangeStatement(iterator, low, high, body)
+    },
+
+    ForIterate(_for, id, _in, exp, block, _glhf_end, _forEnd) {
+      const collection = exp.rep()
+      if (collection.type.kind === "ArrayType") {
+        const iterator = core.variable(id.sourceString, true, collection.type.baseType)
+        context = context.newChildContext({ inLoop: true })
+        context.add(id.sourceString, iterator)
+        const body = block.rep()
+        context = context.parent
+        return core.forStatement(iterator, collection, body)
+      }
+      if (collection.type.kind === "DictType") {
+        const iterator = core.variable(id.sourceString, true, core.arrayType([collection.type.baseType, collection.type.baseType]))
+        context = context.newChildContext({ inLoop: true })
+        context.add(id.sourceString, iterator)
+        const body = block.rep()
+        context = context.parent
+        return core.forStatement(iterator, collection, body)
+      }
+    },
 
     ReturnSomething(exp){
       return core.returnStatement(exp)
@@ -237,18 +244,14 @@ export default function analyze(match) {
     },
 
     intlit(_digits) {
-      // Carlos ints will be represented as plain JS bigints
       return BigInt(this.sourceString)
     },
 
     floatlit(_whole, _point, _fraction, _e, _sign, _exponent) {
-      // Carlos floats will be represented as plain JS numbers
       return Number(this.sourceString)
     },
 
     stringlit(_openQuote, _chars, _closeQuote) {
-      // Carlos strings will be represented as plain JS strings, including
-      // the quotation marks
       return this.sourceString
     },
   })

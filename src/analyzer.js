@@ -84,17 +84,12 @@ export default function analyze(match) {
       return core.program(statements.children.map(s => s.rep()))
     },
 
-    Block(statements, condOPs) {
-      if (condOPs.children.length > 0) {
-        return core.block(statements.rep(), condOPs.children.map(c => c.rep()))
-      }
+    Block(statements) {
       return statements.children.map(s => s.rep())
     },
 
-    EnumBlock(_num, id, _Index, _string, _true, _false, _arrow, Exp){  
-      const enumType = core.enumType(id.sourceString, Exp.rep())
-      context.add(id.sourceString, enumType)
-      return enumType
+    EnumBlock(statements) {
+      return statements.children.map(s => s.rep())  
     },
 
     Ass(relid, _eq, exp) {
@@ -144,6 +139,14 @@ export default function analyze(match) {
 
     ReturnSomething(exp){
       return core.returnStatement(exp)
+    },
+
+    Stmt_function(builtInTypes, id, _open, params, _close, block, _glhf_end) {
+      pass
+    },
+    // change name of enum??? DA VINKI?????
+    Stmt_enum(enum_symbol, exp, enum_block, _glhf_end) {
+      pass
     },
 
     ExpUnary(_open, unaryOp, _close, exp){

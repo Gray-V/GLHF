@@ -42,6 +42,11 @@ export default function analyze(match) {
     must(!context.lookup(name), `Identifier ${name} already declared`, at)
   }
 
+  function mustMatchIdBlockNames(id1, id2, at) {
+    must(id1 === id2, "Enum names must match", at)
+  }
+
+
   function mustHaveBeenFound(entity, name, at) {
     must(entity, `Identifier ${name} not declared`, at)
   }
@@ -88,7 +93,7 @@ export default function analyze(match) {
       return core.program(statements.children.map(s => s.rep()))
     },
 
-    Block(statements) {
+    Block(statements, _next) {
       return statements.children.map(s => s.rep())
     },
 
@@ -141,18 +146,20 @@ export default function analyze(match) {
       }
     },
 
-    Return_something(exp){
+    Return_something(_return,exp){
       return core.returnStatement(exp)
     },
 
-    Stmt_function(_builtInTypes, id, _open, params, _close, block, _glhf_end) {
+  
+
+    Stmt_function(_builtInTypes, id, params, block, _glhf_end, id2) {
       const fun = core.fun(id.sourceString)
       mustNotAlreadyBeDeclared(id.sourceString, { at: id })
-      
+      mustMatchIdBlockNames(id.sourceString, id2.sourceString, { at: id2 })
       context = context.newChildContext({ inLoop: false, function: fun })
-      const params = parameters.rep()
+      const param = params.rep()
 
-      const paramTypes = params.map(param => param.type)
+      const paramTypes = param.map(param => param.type)
       const returnType = type.children?.[0]?.rep() ?? VOID
       fun.type = core.functionType(paramTypes, returnType)
 
@@ -161,12 +168,12 @@ export default function analyze(match) {
 
       // Go back up to the outer context before returning
       context = context.parent
-      return core.functionDeclaration(fun, params, body)
+      return core.functionDeclaration(fun, param, body)
     },
 
     // change name of enum??? DA VINKI?????
     // Only part that doesn't work, will fix later
-    Stmt_enum(_enum_symbol, exp, enum_block, _glhf_end) {
+    Stmt_enum(_enum_symbol, exp, enum_block, _glhf_end, _enum_symbol2) {
       const test = exp.rep()
       mustHaveFunction(test, { at: exp })
       context = context.newChildContext()
@@ -176,7 +183,7 @@ export default function analyze(match) {
       return core.enumStatement(test, consequent, alternate)
     },
 
-    ExpUnary(_open, unaryOp, _close, exp){
+    Exp_unary( unaryOp, exp){
       const [op, operand] = [unaryOp.sourceString, exp.rep()]
       let type
       if (op === "-") {
@@ -189,7 +196,7 @@ export default function analyze(match) {
       return core.unary(op, operand, type)
     },
 
-    Exp_Ternary(exp, _questionMark, exp1, colon, exp2) {
+    Exp_ternary(exp, _questionMark, exp1, colon, exp2) {
       const test = exp.rep()
       mustHaveBooleanType(test, { at: exp })
       const [consequent, alternate] = [exp1.rep(), exp2.rep()]
@@ -197,7 +204,7 @@ export default function analyze(match) {
       return core.conditional(test, consequent, alternate, consequent.type)
     },
     
-    Exp1_or(exp, _ops, exps) {
+    Exp1_binary(exp, _ops, exps) {
       let left = exp.rep()
       mustHaveBooleanType(left, { at: exp })
       for (let e of exps.children) {
@@ -208,7 +215,7 @@ export default function analyze(match) {
       return left
     },
 
-    Exp2_and(exp, _ops, exps) {
+    Exp2_binary(exp, _ops, exps) {
       let left = exp.rep()
       mustHaveBooleanType(left, { at: exp })
       for (let e of exps.children) {
@@ -219,7 +226,7 @@ export default function analyze(match) {
       return left
     },
 
-    Exp3_compare(exp1, relop, exp2) {
+    Exp3_binary(exp1, relop, exp2) {
       const [left, op, right] = [exp1.rep(), relop.sourceString, exp2.rep()]
       // == and != can have any operand types as long as they are the same
       // But inequality operators can only be applied to numbers and strings
@@ -230,7 +237,7 @@ export default function analyze(match) {
       return core.binary(op, left, right, BOOLEAN)
     },
 
-    Exp4_add(exp1, addOp, exp2) {
+    Exp4_binary(exp1, addOp, exp2) {
       const [left, op, right] = [exp1.rep(), addOp.sourceString, exp2.rep()]
       if (op === "+") {
         mustHaveNumericOrStringType(left, { at: exp1 })
@@ -241,14 +248,14 @@ export default function analyze(match) {
       return core.binary(op, left, right, left.type)
     },
 
-    Exp5_multiply(exp1, mulOp, exp2) {
+    Exp5_binary(exp1, mulOp, exp2) {
       const [left, op, right] = [exp1.rep(), mulOp.sourceString, exp2.rep()]
       mustHaveNumericType(left, { at: exp1 })
       mustBothHaveTheSameType(left, right, { at: mulOp })
       return core.binary(op, left, right, left.type)
     },
 
-    Exp6_power(exp1, powerOp, exp2) {
+    Exp6_binary(exp1, powerOp, exp2) {
       const [left, op, right] = [exp1.rep(), powerOp.sourceString, exp2.rep()]
       mustHaveNumericType(left, { at: exp1 })
       mustBothHaveTheSameType(left, right, { at: powerOp })
@@ -274,15 +281,12 @@ export default function analyze(match) {
       return false
     },
 
-    intlit(_digits) {
-      return BigInt(this.sourceString)
-    },
 
-    floatlit(_whole, _point, _fraction, _e, _sign, _exponent) {
+    num(_num, _point, _num2) {
       return Number(this.sourceString)
     },
 
-    stringlit(_openQuote, _chars, _closeQuote) {
+    string(_openQuote, _chars, _closeQuote) {
       return this.sourceString
     },
   })

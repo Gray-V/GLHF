@@ -78,6 +78,10 @@ export default function analyze(match) {
     must(e.type?.kind === "StructType", "Expected a struct", at)
   }
 
+  function mustHaveFunction(e, at) {  
+    must(e.type?.kind === "FunctionType", "Expected a function", at)
+  }
+
 
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(statements) {
@@ -137,16 +141,39 @@ export default function analyze(match) {
       }
     },
 
-    ReturnSomething(exp){
+    Return_something(exp){
       return core.returnStatement(exp)
     },
 
-    Stmt_function(builtInTypes, id, _open, params, _close, block, _glhf_end) {
-      pass
+    Stmt_function(_builtInTypes, id, _open, params, _close, block, _glhf_end) {
+      const fun = core.fun(id.sourceString)
+      mustNotAlreadyBeDeclared(id.sourceString, { at: id })
+      
+      context = context.newChildContext({ inLoop: false, function: fun })
+      const params = parameters.rep()
+
+      const paramTypes = params.map(param => param.type)
+      const returnType = type.children?.[0]?.rep() ?? VOID
+      fun.type = core.functionType(paramTypes, returnType)
+
+      // Analyze body while still in child context
+      const body = block.rep()
+
+      // Go back up to the outer context before returning
+      context = context.parent
+      return core.functionDeclaration(fun, params, body)
     },
+
     // change name of enum??? DA VINKI?????
-    Stmt_enum(enum_symbol, exp, enum_block, _glhf_end) {
-      pass
+    // Only part that doesn't work, will fix later
+    Stmt_enum(_enum_symbol, exp, enum_block, _glhf_end) {
+      const test = exp.rep()
+      mustHaveFunction(test, { at: exp })
+      context = context.newChildContext()
+      const consequent = enum_block.rep()
+      context = context.parent
+      const alternate = enum_block.rep()
+      return core.enumStatement(test, consequent, alternate)
     },
 
     ExpUnary(_open, unaryOp, _close, exp){

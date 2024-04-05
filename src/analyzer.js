@@ -38,6 +38,9 @@ export default function analyze(match) {
     }
   }
 
+  function mustBothHaveTheSameType(e1, e2, at) {
+    must(e1.type === e2.type, "Operands must have the same type", at)
+  }
   function mustNotAlreadyBeDeclared(name, at) {
     must(!context.lookup(name), `Identifier ${name} already declared`, at)
   }
@@ -97,15 +100,15 @@ export default function analyze(match) {
       return statements.children.map(s => s.rep())
     },
 
-    EnumBlock(statements) {
+    Enum_Block(statements,_arrow,exp) {
       return statements.children.map(s => s.rep())  
     },
 
     Ass(relid, _eq, exp) {
       const initializer = exp.rep()
-      const variable = core.variable(relid.sourceString, readOnly, initializer.type)
+      const variable = core.variable(relid.sourceString, false, initializer.type)
       // Handle index vs id for declaration
-      mustNotAlreadyBeDeclared(relid.sourceString, { at: id })
+      mustNotAlreadyBeDeclared(relid.sourceString, { at: relid })
       context.add(relid.sourceString, variable)
       return core.variableDeclaration(variable, initializer)
     },
@@ -114,7 +117,7 @@ export default function analyze(match) {
       return paramList.asIteration().children.map(p => p.rep())
     },
 
-    ForIncrement(_for, _open, id, exp, _close, block, _glhf_end, endExp) {
+    For_increment(_for, _open, id, _comma, exp, _close, block, _glhf_end, endExp) {
       const [low, high] = [exp.rep(), endExp.rep()]
       mustHaveIntegerType(low, { at: exp1 })
       mustHaveIntegerType(high, { at: endExp })
@@ -126,7 +129,7 @@ export default function analyze(match) {
       return core.forRangeStatement(iterator, low, high, body)
     },
 
-    ForIterate(_for, id, _in, exp, block, _glhf_end, _forEnd) {
+    For_Iterable(_for, id, _in, exp, block, _glhf_end, _forEnd) {
       const collection = exp.rep()
       if (collection.type.kind === "ArrayType") {
         const iterator = core.variable(id.sourceString, true, collection.type.baseType)
@@ -279,6 +282,14 @@ export default function analyze(match) {
 
     false(_) {
       return false
+    },
+
+    Array(_open, exps, _close) {
+      const elements = exps.asIteration().children.map(e => e.rep())
+      const baseType = elements[0]?.type ?? ANY
+      elements.forEach(e => mustBothHaveTheSameType(e, elements[0], { at: _open }))
+      elements.type = core.arrayType(baseType)
+      return elements
     },
 
 

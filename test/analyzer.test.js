@@ -9,10 +9,10 @@ const semanticChecks = [
     ["variable declaration int", "x = 1"],
     [
         "assign to array element using indexing",
-        "vargh a = [1,2,3]\n a[1]=100\n",
+        "a = [1,2,3]\n a[1]=100\n",
     ],
-    ["short return", "captain f() -> none { anchor }"],
-    ["long return", "captain f() -> booty { anchor aye }"],
+    ["short return", "Gameloop a ()\nreturn\n end a"],
+    ["long return", "Gameloop a ()\nreturn 1 end a"],
     ["return in nested if", "captain f() -> none {yo aye {anchor}}"],
     [
         "long if statement",

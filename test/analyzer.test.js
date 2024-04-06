@@ -6,35 +6,73 @@ import parser from "../src/parser.js"
 
 // Programs that are semantically correct
 const semanticChecks = [
-    ["variable declaration int", "x = 1"],
+    ["variable declaration", "x = 10"]
     [
-        "assign to array element using indexing",
-        "a = [1,2,3]\n a[1]=100\n",
-    ],
-    ["short return", "Gameloop a ()\nreturn\n end a"],
-    ["long return", "Gameloop a ()\nreturn 1 end a"],
-    ["return in nested if", "captain f() -> none {yo aye {anchor}}"],
+        "function",
+        "Function load()\nFile.parent.start_menu\nend load\n"
+    ]
     [
-        "long if statement",
-        "captain f() -> none {yo aye {anchor} yo ho 3 == 4 {anchor} ho {anchor}}",
-    ],
-    ["ternary statement", "captain f() -> none { ahoy aye ? 1.0 : 0.0 }"],
-    ["break in nested if", "parrot nay {yo aye {maroon}}"],
-    ["long if", "yo aye {ahoy 1} ho {ahoy 3}"],
-    ["else if", "yo aye {ahoy 1} yo ho aye {ahoy 0} ho {ahoy 3}"],
+        "function and call",
+        "Function multiply(x,y)\nreturn(x*y)\nend multiply\nmultiply(3,5)"
+    ]
+    ["division", "print(5/2)"]
+    ["subtraction", "print(2-2)"]
+    ["exponential", "print(2**2)"]
+    ["exponential with negative", "print(-2**2)"]
+    ["modulos", "print(3%2)"]
     [
-        "loop through array",
-        "[int] y = [2,3,4] \nchase vargh x through y {ahoy 1}",
-    ],
-    ["for in range", "chase vargh i = 0 until 10 {ahoy 0}"],
-    ["or", "yo aye or 1<2 {ahoy 0}"],
-    ["relations", "int x = 3\n vargh y = 2\n ahoy 1<=2 and x>y and 3.5<1.2"],
-    ["and", "ahoy aye and 1<2 and nay and not aye"],
-    ["and 2 ", "ahoy not aye and 1<2 and nay and not aye"],
-    ["ok to == arrays", "ahoy [1]==[5,8]"],
-    ["ok to != arrays", "ahoy [1]!=[5,8]"],
-    ["simple arithmetic", `int x = 2*4`],
-    ["arithmetic", "vargh x = 1\n ahoy 2*3+5**(-3)/2-5%8"],
+        "for each",
+        "for e in array\nend for"
+    ]
+    [
+        "for indexed",
+        "for (i = 0, i += 1)\nprint(\"HAI\")\nend i < array.length"
+    ]
+    [
+        "dictionary",
+        "dict_2 = <<\"hello\" : \"world\", 2 : \"wow\", 2.02 : true>>"
+    ]
+    [
+        "multi line dictionary",
+        "dict_1 = <<\n\"hello\": 1 + 3,\n\"cars\": \"black\",\n1: \"socks\"\n>>"
+    ]
+    ["array declaration", "array_1 = [\"hello\",\"goodbye\",\"run away\", 1]"]
+    ["add to array", "array_1.add(\"2\")"]
+    ["insert to array", "array_1.insert(1, \"hi\")"]
+    ["overwrite array index", "array_1[1] = \"hello\""]
+    ["delete array index", "array_1.delete(2)"]
+    ["set settings","Window default()\nwidth = 200\nheight = 100\nend default"]
+    ["recursive functions", "Function load()\nFile.parent.start_menu\nload()\nend load\n"]
+    []
+    // ["variable declaration int", "x = 1"],
+    // [
+    //     "assign to array element using indexing",
+    //     "a = [1,2,3]\n a[1]=100\n",
+    // ],
+    // ["short return", "Gameloop a ()\nreturn\n end a"],
+    // ["long return", "Gameloop a ()\nreturn 1 end a"],
+    // ["return in nested if", "captain f() -> none {yo aye {anchor}}"],
+    // [
+    //     "long if statement",
+    //     "captain f() -> none {yo aye {anchor} yo ho 3 == 4 {anchor} ho {anchor}}",
+    // ],
+    // ["ternary statement", "captain f() -> none { ahoy aye ? 1.0 : 0.0 }"],
+    // ["break in nested if", "parrot nay {yo aye {maroon}}"],
+    // ["long if", "yo aye {ahoy 1} ho {ahoy 3}"],
+    // ["else if", "yo aye {ahoy 1} yo ho aye {ahoy 0} ho {ahoy 3}"],
+    // [
+    //     "loop through array",
+    //     "[int] y = [2,3,4] \nchase vargh x through y {ahoy 1}",
+    // ],
+    // ["for in range", "chase vargh i = 0 until 10 {ahoy 0}"],
+    // ["or", "yo aye or 1<2 {ahoy 0}"],
+    // ["relations", "int x = 3\n vargh y = 2\n ahoy 1<=2 and x>y and 3.5<1.2"],
+    // ["and", "ahoy aye and 1<2 and nay and not aye"],
+    // ["and 2 ", "ahoy not aye and 1<2 and nay and not aye"],
+    // ["ok to == arrays", "ahoy [1]==[5,8]"],
+    // ["ok to != arrays", "ahoy [1]!=[5,8]"],
+    // ["simple arithmetic", `int x = 2*4`],
+    // ["arithmetic", "vargh x = 1\n ahoy 2*3+5**(-3)/2-5%8"],
     // [
     //     "recursive functions",
     //     "captain S(int x, int y) -> int {yo x == 0 {anchor 0 } anchor S(x-1, y) }",
@@ -157,6 +195,11 @@ const semanticChecks = [
 
 // // Programs that are syntactically correct but have semantic errors
 const semanticErrors = [
+    [
+        "assigning undeclared variable",
+        x = x + 5,
+        /Gamer! You forgot to identify your variable./
+    ]
     // [
     //     "assigning undeclared variable",
     //     `z = z + 5`,

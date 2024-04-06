@@ -6,44 +6,47 @@ import parser from "../src/parser.js"
 
 // Programs that are semantically correct
 const semanticChecks = [
-    ["variable declaration", "x = 10"]
+    ["variable declaration", "x = 10"],
     [
         "function",
         "Function load()\nFile.parent.start_menu\nend load\n"
-    ]
+    ],
     [
         "function and call",
-        "Function multiply(x,y)\nreturn(x*y)\nend multiply\nmultiply(3,5)"
-    ]
-    ["division", "print(5/2)"]
-    ["subtraction", "print(2-2)"]
-    ["exponential", "print(2**2)"]
-    ["exponential with negative", "print(-2**2)"]
-    ["modulos", "print(3%2)"]
+        "Function load()\nFile.parent.start_menu\nend load\nload()"
+    ],
+    ["division", "print(5/2)"],
+    ["subtraction", "print(2-2)"],
+    ["exponential", "print(2**2)"],
+    ["exponential with negative", "print(-2**2)"],
+    ["modulos", "print(3%2)"],
     [
         "for each",
         "for e in array\nend for"
-    ]
+    ],
     [
         "for indexed",
         "for (i = 0, i += 1)\nprint(\"HAI\")\nend i < array.length"
-    ]
+    ],
+    [
+        "nested for",
+        "for (i = 0, i += 1)\nfor(j = 0; j += 1)\nprint(\"HAI^2\")\nend j < 10\nprint(\"HAI\")\nend i < 10"
+    ],
     [
         "dictionary",
         "dict_2 = <<\"hello\" : \"world\", 2 : \"wow\", 2.02 : true>>"
-    ]
+    ],
     [
         "multi line dictionary",
         "dict_1 = <<\n\"hello\": 1 + 3,\n\"cars\": \"black\",\n1: \"socks\"\n>>"
-    ]
-    ["array declaration", "array_1 = [\"hello\",\"goodbye\",\"run away\", 1]"]
-    ["add to array", "array_1.add(\"2\")"]
-    ["insert to array", "array_1.insert(1, \"hi\")"]
-    ["overwrite array index", "array_1[1] = \"hello\""]
-    ["delete array index", "array_1.delete(2)"]
-    ["set settings","Window default()\nwidth = 200\nheight = 100\nend default"]
-    ["recursive functions", "Function load()\nFile.parent.start_menu\nload()\nend load\n"]
-    []
+    ],
+    ["array declaration", "array_1 = [\"hello\",\"goodbye\",\"run away\", 1]"],
+    ["add to array", "array_1.add(\"2\")"],
+    ["insert to array", "array_1.insert(1, \"hi\")"],
+    ["overwrite array index", "array_1[1] = \"hello\""],
+    ["delete array index", "array_1.delete(2)"],
+    ["set settings","Window default()\nwidth = 200\nheight = 100\nend default"],
+    ["recursive functions", "Function load()\nFile.parent.start_menu\nload()\nend load\n"],
     // ["variable declaration int", "x = 1"],
     // [
     //     "assign to array element using indexing",
@@ -197,7 +200,7 @@ const semanticChecks = [
 const semanticErrors = [
     [
         "assigning undeclared variable",
-        x = x + 5,
+        "x = x + 5",
         /Gamer! You forgot to identify your variable./
     ]
     // [

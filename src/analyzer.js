@@ -49,7 +49,6 @@ export default function analyze(match) {
     must(id1 === id2, "Enum names must match", at)
   }
 
-
   function mustHaveBeenFound(entity, name, at) {
     must(entity, `Identifier ${name} not declared`, at)
   }
@@ -153,8 +152,6 @@ export default function analyze(match) {
       return core.returnStatement(exp)
     },
 
-  
-
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, id2) {
       const fun = core.fun(id.sourceString)
       mustNotAlreadyBeDeclared(id.sourceString, { at: id })
@@ -162,16 +159,16 @@ export default function analyze(match) {
       context = context.newChildContext({ inLoop: false, function: fun })
       const param = params.rep()
 
-      const paramTypes = param.map(param => param.type)
-      const returnType = type.children?.[0]?.rep() ?? VOID
-      fun.type = core.functionType(paramTypes, returnType)
-
       // Analyze body while still in child context
       const body = block.rep()
 
       // Go back up to the outer context before returning
       context = context.parent
       return core.functionDeclaration(fun, param, body)
+    },
+
+    Stmt(_stmt) {
+      return _stmt.rep()
     },
 
     // change name of enum??? DA VINKI?????
@@ -186,7 +183,7 @@ export default function analyze(match) {
       return core.enumStatement(test, consequent, alternate)
     },
 
-    Exp_unary( unaryOp, exp){
+    Exp_unary(unaryOp, exp){
       const [op, operand] = [unaryOp.sourceString, exp.rep()]
       let type
       if (op === "-") {
@@ -292,6 +289,12 @@ export default function analyze(match) {
       return elements
     },
 
+    Call(id, _open, exps, _close){
+      const fun = context.lookup(id.sourceString)
+      const args = exps.asIteration().children.map(e => e.rep())
+      args.forEach((a, i) => mustBothHaveTheSameType(a, fun.type.params[i], { at: _open }))
+      return core.functionCall(fun, args)
+    },
 
     num(_num, _point, _num2) {
       return Number(this.sourceString)
@@ -300,6 +303,7 @@ export default function analyze(match) {
     string(_openQuote, _chars, _closeQuote) {
       return this.sourceString
     },
+    
   })
 
   return builder(match).rep()

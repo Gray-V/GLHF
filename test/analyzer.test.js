@@ -15,6 +15,10 @@ const semanticChecks = [
         "function and call",
         "Function load()\nFile.parent.start_menu\nend load\nload()"
     ],
+    [
+        "recursive function",
+        "Function load()\nFile.parent.start_menu\nload()\nend load"
+    ],
     ["division", "print(5/2)"],
     ["subtraction", "print(2-2)"],
     ["exponential", "print(2**2)"],
@@ -26,11 +30,11 @@ const semanticChecks = [
     ],
     [
         "for indexed",
-        "for (i = 0, i += 1)\nprint(\"HAI\")\nend i < array.length"
+        "for (i = 0, i += 1)\nprint(\"HAI\")\nend i < len(array)"
     ],
     [
         "nested for",
-        "for (i = 0, i += 1)\nfor(j = 0; j += 1)\nprint(\"HAI^2\")\nend j < 10\nprint(\"HAI\")\nend i < 10"
+        "for (i = 0, i += 1)\nfor(j = 0, j += 1)\nprint(\"HAI^2\")\nend j < 10\nprint(\"HAI\")\nend i < 10"
     ],
     [
         "dictionary",
@@ -47,6 +51,7 @@ const semanticChecks = [
     ["delete array index", "array_1.delete(2)"],
     ["set settings","Window default()\nwidth = 200\nheight = 100\nend default"],
     ["recursive functions", "Function load()\nFile.parent.start_menu\nload()\nend load\n"],
+    ["multiple arithmetic operations", "print(5-2+2/3)"]
     // ["variable declaration int", "x = 1"],
     // [
     //     "assign to array element using indexing",

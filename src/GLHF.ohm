@@ -55,7 +55,7 @@ GLHF {
     Print             = print "(" ListOf<Exp, ","> ")"
     Wait              = wait "(" num ")"
     Index             = id "[" (string | num*) "]"
-    Path              = "File." NonemptyListOf<(~glhf_end idchar)*, ".">
+    Path              = "File." NonemptyListOf<(~glhf_end id), ".">
 	Array             = "[" ListOf<Exp, ","> "]"
     Dictionary        = "<<"  ListOf<Dictionary_format, ","> ">>"
     Dictionary_format = Exp ":" Exp
@@ -73,15 +73,16 @@ GLHF {
     break         = "break" ~idchar
     return        = "return" ~idchar
     continue      = "continue" ~idchar
-    default       = "default" ~idchar
+    default       = "_" ~idchar
     for           = "for" ~idchar
     in            = "in" ~idchar
     glhf_end      = "end" ~idchar
     gameloop      = "Gameloop" ~idchar
     input         = "Input" ~idchar
     player        = "Player" ~idchar
+    window        = "Window" ~idchar
     idchar        = letter | digit | "_"
-    builtin_types = gameloop | function | input | player
+    builtin_types = gameloop | function | input | player | window
     keyword       = builtin_types | true | false | glhf_end | enum_symbol | wait | print | none | break | return | continue | for | in | default
     string        = ("\"" | "'") (~ ("\"" | "'") any)* ("\"" | "'")
     id            = ~keyword letter idchar*

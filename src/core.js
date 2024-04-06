@@ -136,11 +136,19 @@ export function program(statements) {
   }
   
   export function functionCall(callee, args) {
-    return { kind: "FunctionCall", callee, args, type: callee.type.returnType }
+    return { kind: "FunctionCall", callee, args, type: callee.type }
   }
   
   export function constructorCall(callee, args) {
     return { kind: "ConstructorCall", callee, args, type: callee }
+  }
+
+  export function path(path) {
+    return { kind: "Path", path, type: arrayType(stringType)}
+  }
+
+  export function print(print) {
+    return { kind: "Print", print, type: arrayType(anyType) }
   }
   
   // These local constants are used to simplify the standard library definitions.

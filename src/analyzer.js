@@ -152,10 +152,9 @@ export default function analyze(match) {
       return core.returnStatement(exp)
     },
 
-    Stmt_function(_builtInTypes, id, params, block, _glhf_end, id2) {
+    Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
       const fun = core.fun(id.sourceString)
       mustNotAlreadyBeDeclared(id.sourceString, { at: id })
-      mustMatchIdBlockNames(id.sourceString, id2.sourceString, { at: id2 })
       context = context.newChildContext({ inLoop: false, function: fun })
       const param = params.rep()
 
@@ -281,19 +280,67 @@ export default function analyze(match) {
       return false
     },
 
+    OpAss(id, op ,exp){
+      const variable = context.lookup(id.sourceString)
+      const source = exp.rep()
+      mustBothHaveTheSameType(variable, source, { at: op })
+      return core.assignment(variable, core.binary(op.sourceString, variable, source, variable.type))
+    },
+
+    Method(exp1, _period, exp2){
+      const object = exp1.rep()
+      const method = exp2.rep()
+      mustHaveFunction(method, { at: exp2 })
+      return core.methodCall(object, method)
+    },
+    
     Array(_open, exps, _close) {
       const elements = exps.asIteration().children.map(e => e.rep())
       const baseType = elements[0]?.type ?? ANY
-      elements.forEach(e => mustBothHaveTheSameType(e, elements[0], { at: _open }))
       elements.type = core.arrayType(baseType)
       return elements
     },
 
     Call(id, _open, exps, _close){
-      const fun = context.lookup(id.sourceString)
+      let fun = context.lookup(id.sourceString)
+      fun.type = core.anyType
       const args = exps.asIteration().children.map(e => e.rep())
       args.forEach((a, i) => mustBothHaveTheSameType(a, fun.type.params[i], { at: _open }))
       return core.functionCall(fun, args)
+    },
+
+    Path(_file, exps){
+      const path = exps.asIteration().children.map(e => e.sourceString)
+      return core.path(path)
+    },
+
+    Wait(_wait, _open, num, _close) {
+      return core.waitStatement(num)
+    },
+    
+    //NOT DONE
+    Index(id, _open, exp, _close ){
+      const elements = exps.asIteration().children.map(e => e.rep())
+
+      mustHaveNumericOrStringType(exp.rep(), { at: exp })
+      return core.subscript(id.rep(), exp.rep())
+    },
+
+    Print(_print, _open, exps, _end) {
+      const print = exps.asIteration().children.map(e => e.rep())
+      return core.print(print)
+    },
+
+    Dictionary(_arrowsLeft, exps, _arrowsRight) { 
+      const elements = exps.asIteration().children.map(e => e.rep())
+      const baseType = elements[0]?.type ?? ANY
+      elements.forEach(e => mustBothHaveTheSameType(e, elements[0], { at: _arrowsLeft }))
+      elements.type = core.dictType(baseType)
+      return elements
+    },
+
+    Dictionary_format(exp1, _colon, exp2)  {
+      return [exp1.rep(), exp2.rep()]
     },
 
     num(_num, _point, _num2) {

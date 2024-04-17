@@ -128,8 +128,8 @@ export default function analyze(match) {
       return core.forRangeStatement(iterator, low, high, body)
     },
 
-    For_Iterable(_for, id, _in, exp, block, _glhf_end, _forEnd) {
-      const collection = exp.rep()
+    For_iterable(_for, id, _in, exp, block, _glhf_end, _forEnd) {
+      const collection = exp.sourceString
       if (collection.type.kind === "ArrayType") {
         const iterator = core.variable(id.sourceString, true, collection.type.baseType)
         context = context.newChildContext({ inLoop: true })
@@ -288,8 +288,9 @@ export default function analyze(match) {
     },
 
     Method(exp1, _period, exp2){
-      const object = exp1.rep()
-      const method = exp2.rep()
+      const object = exp1.sourceString
+      const method = exp2.sourceString
+      method.type = core.functionType
       mustHaveFunction(method, { at: exp2 })
       return core.methodCall(object, method)
     },

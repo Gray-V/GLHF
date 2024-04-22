@@ -1,4 +1,4 @@
-import * as core from "./core.js"
+ import * as core from "./core.js"
 
 
 const INT = core.intType
@@ -7,6 +7,7 @@ const STRING = core.stringType
 const BOOLEAN = core.boolType
 const ANY = core.anyType
 const VOID = core.voidType
+// console.log(ANY)
 
 
 class Context {
@@ -146,6 +147,7 @@ export default function analyze(match) {
         context = context.parent
         return core.forStatement(iterator, collection, body)
       }
+
     },
 
     Return_something(_return,exp){
@@ -153,9 +155,10 @@ export default function analyze(match) {
     },
 
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
-      const fun = core.fun(id.sourceString)
+      const fun = core.fun(id.sourceString, ANY)
       mustNotAlreadyBeDeclared(id.sourceString, { at: id })
-      context = context.newChildContext({ inLoop: false, function: fun })
+      context = context.newChildContext({ inLoop: false, function: fun})
+      // console.log(fun)
       const param = params.rep()
 
       // Analyze body while still in child context
@@ -163,6 +166,7 @@ export default function analyze(match) {
 
       // Go back up to the outer context before returning
       context = context.parent
+      // console.log(context)
       return core.functionDeclaration(fun, param, body)
     },
 
@@ -303,8 +307,8 @@ export default function analyze(match) {
     },
 
     Call(id, _open, exps, _close){
+      // let fun = core.fun(id.sourceString, ANY)
       let fun = context.lookup(id.sourceString)
-      fun.type = core.anyType
       const args = exps.asIteration().children.map(e => e.rep())
       args.forEach((a, i) => mustBothHaveTheSameType(a, fun.type.params[i], { at: _open }))
       return core.functionCall(fun, args)

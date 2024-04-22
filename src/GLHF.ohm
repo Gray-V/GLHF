@@ -1,7 +1,7 @@
 GLHF {
     Program = Stmt*
     Stmt = Ass														    
-         | builtin_types id Params Block glhf_end id		            -- function
+         | builtin_types id Params Block glhf_end Exp		            -- function
          | enum_symbol Exp Enum_Block glhf_end enum_symbol			    -- enum
          | For															
          | Path														    
@@ -50,7 +50,7 @@ GLHF {
               | "(" Exp ")"                                              -- parens
     
 	OpAss             = id ("+=" | "-=" | "*=" | "/=" | "%=" | "^=" ) Exp
-    Call              = id "(" ListOf<Exp, ","> ")"
+    Call              = Exp7_id "(" ListOf<Exp, ","> ")"
     Method            = (id | Index) "." (Call | id | Index)
     Print             = print "(" ListOf<Exp, ","> ")"
     Wait              = wait "(" num ")"

@@ -136,6 +136,7 @@ export function program(statements) {
   }
   
   export function functionCall(callee, args) {
+    // console.log(args)
     return { kind: "FunctionCall", callee, args, type: callee.type }
   }
   

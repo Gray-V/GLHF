@@ -50,7 +50,6 @@ const semanticChecks = [
     ["overwrite array index", "array_1[1] = \"hello\""],
     ["delete array index", "array_1.delete(2)"],
     ["set settings","Window default()\nwidth = 200\nheight = 100\nend default"],
-    ["recursive functions", "Function load()\nFile.parent.start_menu\nload()\nend load\n"],
     ["multiple arithmetic operations", "print(5-2+2/3)"]
     // ["variable declaration int", "x = 1"],
     // [

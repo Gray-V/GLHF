@@ -60,3 +60,13 @@ end count == 5
 ```
 --this is a comment
 ```
+
+
+### Authors
+Grayson von Goetz
+Matthew Lee
+Vivek Dhingra
+Aiden Mcdougald
+Lawrence Benitez
+
+

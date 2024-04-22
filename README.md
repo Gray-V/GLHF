@@ -63,10 +63,10 @@ end count == 5
 
 
 ### Authors
-Grayson von Goetz
-Matthew Lee
-Vivek Dhingra
-Aiden Mcdougald
+Grayson von Goetz, 
+Matthew Lee, 
+Vivek Dhingra, 
+Aiden Mcdougald, 
 Lawrence Benitez
 
 

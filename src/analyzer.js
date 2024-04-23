@@ -55,7 +55,7 @@ export default function analyze(match) {
   }
 
   function mustHaveBeenFound(entity, name, at) {
-    must(entity, `Identifier ${name} not declared`, at);
+    must(entity, `Gamer! You forgot to identify your variable`, at);
   }
 
   function mustHaveNumericType(e, at) {
@@ -306,7 +306,7 @@ export default function analyze(match) {
       return entity;
     },
 
-    id(_first,_rest) {
+    id(_first, _rest) {
       return core.variable(this.sourceString, ANY, false);
     },
 
@@ -321,7 +321,7 @@ export default function analyze(match) {
     OpAss(id, op, exp) {
       const variable = context.lookup(id.sourceString);
       const source = exp.rep();
-      console.log("source" , source.type)
+      console.log("source", source.type);
 
       // console.log("v=" , variable.Context,"s=" , source)
       // context.add(relid.sourceString, variable);
@@ -333,8 +333,8 @@ export default function analyze(match) {
     },
 
     Method(exp1, _period, exp2) {
-      const object = exp1.sourceString;
-      const method = exp2.sourceString;
+      const object = exp1.rep();
+      const method = exp2.rep();
       method.type = core.functionType;
       mustHaveFunction(method, { at: exp2 });
       return core.methodCall(object, method);
@@ -394,8 +394,12 @@ export default function analyze(match) {
       return [exp1.rep(), exp2.rep()];
     },
 
-    num(_num, _point, _num2) {
+    num_float(_num, _point, _num2) {
       return Number(this.sourceString);
+    },
+
+    num_int(_num) {
+      return BigInt(this.sourceString);
     },
 
     string(_openQuote, _chars, _closeQuote) {

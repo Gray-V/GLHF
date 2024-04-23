@@ -54,7 +54,7 @@ GLHF {
     Method            = (id | Index) "." (Call | id | Index)
     Print             = print "(" ListOf<Exp, ","> ")"
     Wait              = wait "(" num ")"
-    Index             = Exp7_id "[" (string | num*) "]"
+    Index             = Exp7 "[" Exp "]"
     Path              = "File." NonemptyListOf<(~glhf_end id), ".">
 	Array             = "[" ListOf<Exp, ","> "]"
     Dictionary        = "<<"  ListOf<Dictionary_format, ","> ">>"
@@ -62,7 +62,8 @@ GLHF {
 
 
 
-	num           = digit+ ("." digit+)?
+	num           = digit+ ("." digit+)     -- float
+                  | digit+                  -- int
     function      = "Function" ~idchar
     enum_symbol	  = "~"
     true          = "true" ~idchar

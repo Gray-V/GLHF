@@ -30,7 +30,7 @@ const semanticChecks = [
     ],
     [
         "for indexed",
-        "for (i = 0, i += 1)\nprint(\"HAI\")\nend i < len(array)"
+        "for (i = 0, i += 1)\nprint(\"HAI\")\nend i < 5"
     ],
     [
         "nested for",

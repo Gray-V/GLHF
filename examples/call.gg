@@ -1,0 +1,4 @@
+Function load()
+  File.parent.start_menu
+end load
+load()

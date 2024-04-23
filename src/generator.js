@@ -110,37 +110,39 @@ export default function generate(program) {
         Exp_ternary(exp, exp1, exp2){
             return `((${gen(exp)}) ? (${gen(exp1)}) : (${gen(exp2)}))`
         },
-        Variable(v) {
-            return targetName(v)
+        Exp1_binary(exp, exp1){
+            return `(${gen(exp)} | ${gen(exp1)})`
         },
-        Function(f) {
-            return targetName(f)
+        Exp2_binary(exp, exp1){
+            return `(${gen(exp)} & ${gen(exp1)})`
         },
-        ReturnStatement(s) {
-            output.push(`return ${gen(s.expression)};`)
+        Exp3_binary(exp,relop, exp1){
+            return `(${gen(exp)} ${relop} ${gen(exp1)})`
         },
-        ShortReturnStatement(s) {
-            output.push("return;")
+        Exp4_binary(exp, addOp, exp1){
+            return `(${gen(exp)} ${addOp} ${gen(exp1)})`
         },
-        IfStatement(s) {
-            let e = ""
-            for (let i = 0; i < s.test.length; i++) {
-                output.push(`${e}if (${gen(s.test[i])}) {`)
-                gen(s.consequent[i])
-                if (i < s.test.length - 1) {
-                    e = `} else `
-                }
-            }
-            if (s.alternate.length > 0) {
-                output.push("} else {")
-                gen(s.alternate)
-            }
-            output.push("}")
+        Exp5_binary(exp, mulOp, exp1){
+            return `(${gen(exp)} ${mulOp} ${gen(exp1)})`
         },
-        WhileLoop(s) {
-            output.push(`while (${gen(s.test)}) {`)
-            gen(s.body)
-            output.push("}")
+        Exp6_binary(exp, exp1){
+            return `(${gen(exp)} ** ${gen(exp1)})`
+        },
+        Exp7_parens(exp){
+            return `(${gen(exp)})`
+        },
+        Exp7_id(id){
+            return `${id.sourceString}`
+        },
+        //True and False unsure if correct
+        true(){
+            return "true"
+        },
+        false(){
+            return "false"
+        },
+        OpAss(id,op, exp){
+            output.push(`${gen(id)} ${op} ${gen(exp)};`)
         },
 
         ForEachLoop(s) {

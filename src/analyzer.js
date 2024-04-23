@@ -59,6 +59,7 @@ export default function analyze(match) {
   }
 
   function mustHaveNumericType(e, at) {
+    // console.log("e", e)
     must([INT, FLOAT].includes(e.type), "Expected a number", at);
   }
 
@@ -131,23 +132,24 @@ export default function analyze(match) {
     For_increment(
       _for,
       _open,
-      id,
+      assignment,
       _comma,
-      exp,
+      updateExp,
       _close,
       block,
       _glhf_end,
       endExp
     ) {
-      const [low, high] = [exp.rep(), endExp.rep()];
-      mustHaveIntegerType(low, { at: exp1 });
-      mustHaveIntegerType(high, { at: endExp });
-      const iterator = core.variable(id.sourceString, INT, true);
+      const iterator = assignment.rep();
       context = context.newChildContext({ inLoop: true });
-      context.add(id.sourceString, iterator);
+      context.add(iterator.variable.name, iterator.variable);
+      const [update, end] = [updateExp.rep(), endExp.rep()];
+      mustHaveNumericType(update.target, { at: updateExp });
+      mustHaveNumericType(end.left, { at: endExp });
+      mustHaveNumericType(end.right, { at: endExp });
       const body = block.rep();
       context = context.parent;
-      return core.forRangeStatement(iterator, low, high, body);
+      return core.forRangeStatement(iterator, update, end, body);
     },
 
     For_iterable(_for, id, _in, exp, block, _glhf_end, _forEnd) {
@@ -185,6 +187,7 @@ export default function analyze(match) {
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
       const fun = core.fun(id.sourceString, ANY);
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });
+      context.add(id.sourceString, fun);
       context = context.newChildContext({ inLoop: false, function: fun });
       // console.log(fun)
       const param = params.rep();
@@ -194,7 +197,6 @@ export default function analyze(match) {
 
       // Go back up to the outer context before returning
       context = context.parent;
-      context.add(id.sourceString, fun);
       return core.functionDeclaration(fun, param, body);
     },
 
@@ -304,6 +306,10 @@ export default function analyze(match) {
       return entity;
     },
 
+    id(_first,_rest) {
+      return core.variable(this.sourceString, ANY, false);
+    },
+
     true(_) {
       return true;
     },
@@ -315,6 +321,10 @@ export default function analyze(match) {
     OpAss(id, op, exp) {
       const variable = context.lookup(id.sourceString);
       const source = exp.rep();
+      console.log("source" , source.type)
+
+      // console.log("v=" , variable.Context,"s=" , source)
+      // context.add(relid.sourceString, variable);
       mustBothHaveTheSameType(variable, source, { at: op });
       return core.assignment(
         variable,
@@ -357,10 +367,12 @@ export default function analyze(match) {
 
     //NOT DONE
     Index(id, _open, exp, _close) {
-      const elements = exps.asIteration().children.map((e) => e.rep());
-
-      mustHaveNumericOrStringType(exp.rep(), { at: exp });
-      return core.subscript(id.rep(), exp.rep());
+      const array = context.lookup(id.sourceString);
+      // console.log(array);
+      const index = exp.rep();
+      mustHaveAnArrayType(array, { at: id });
+      mustHaveIntegerType(index, { at: exp });
+      return core.subscript(array, index);
     },
 
     Print(_print, _open, exps, _end) {

@@ -74,7 +74,7 @@ export default function generate(program) {
       output.push(`return ${e};`);
     },
     //Not done - Specify Types
-    Stmt_function(type, id, params, block, exp) {
+    Stmt_function(id, params, block, exp) {
       output.push(`function ${gen(id)} (${gen(params).join(", ")}) {`);
       gen(block);
       output.push("}");
@@ -130,44 +130,25 @@ export default function generate(program) {
     OpAss(id, op, exp) {
       output.push(`${gen(id)} ${op} ${gen(exp)};`);
     },
-
-    ForEachLoop(s) {
-      output.push(`for (let ${gen(s.variable)} of ${gen(s.expression)}) {`);
-      gen(s.body);
+    Method(c){
+      output.push(
+        `${targetName(c.name)}(${gen(c.name.parameters).join(", ")}) {`
+      );
+      gen(c.body);
       output.push("}");
     },
-    Conditional(e) {
-      return `((${gen(e.test)}) ? (${gen(e.consequent)}) : (${gen(
-        e.alternate
-      )}))`;
-    },
-    BinaryExpression(e) {
-      let op = { "==": "===", "!=": "!==", or: "||", and: "&&" }[e.op] ?? e.op;
-      return `(${gen(e.left)} ${op} ${gen(e.right)})`;
-    },
-    UnaryExpression(e) {
-      return `${e.op}(${gen(e.operand)})`;
-    },
-    ArrayExpression(e) {
+    Array(e){
       return `[${gen(e.elements).join(",")}]`;
     },
-    DotExpression(e) {
-      const object = gen(e.object);
-      const member = gen(e.member.variable);
-      return `(${object}["${member}"])`;
-    },
-    ConstructorDeclaration(c) {
-      output.push(`constructor(${gen(c.parameters).join(",")}) {`);
-      for (let field of c.body) {
-        output.push(`${gen(field)}`);
+    Call(c){
+      const targetCode = `${gen(c.callee)}(${gen(c.args).join(", ")})`;
+      // Calls in expressions vs in statements are handled differently
+      if (c.callee instanceof Type || c.callee.type.returnType !== Type.NONE) {
+        return targetCode;
       }
-      output.push("}");
+      output.push(`${targetCode};`);
     },
-    PrintStatement(e) {
-      const argument = gen(e.argument);
-      output.push(`console.log(${argument});`);
-    },
-    DotCall(c) {
+    Path(c){
       let targetCode = `${targetName(c.object)}.${targetName(
         c.member.callee.name
       )}()`;
@@ -179,26 +160,32 @@ export default function generate(program) {
       }
       output.push(`${targetCode};`);
     },
-    MethodDeclaration(c) {
-      output.push(
-        `${targetName(c.name)}(${gen(c.name.parameters).join(", ")}) {`
-      );
-      gen(c.body);
-      output.push("}");
+    Wait(n){
+      sleep(n)
     },
-    Call(c) {
-      const targetCode = `${gen(c.callee)}(${gen(c.args).join(", ")})`;
-      // Calls in expressions vs in statements are handled differently
-      if (c.callee instanceof Type || c.callee.type.returnType !== Type.NONE) {
-        return targetCode;
-      }
-      output.push(`${targetCode};`);
+    Index(id, exp){
+      return `${gen(id)}[${gen(exp)}]`;
     },
-    String(e) {
-      return e;
+    Print(e){
+      const argument = gen(e.argument);
+      output.push(`console.log(${argument});`);
     },
-    Array(a) {
-      return a.map(gen);
+    //Unsure how to implement
+    Dictionary(exps){
+      return `{${gen(exps).join(", ")}}`;
+    },
+    Dictionary_format(exp1, exp2){
+      return `${gen(exp1)}: ${gen(exp2)}`
+    },
+
+    num_float(e){
+      return e
+    },
+    num_int(e){
+      return e
+    },
+    string(e){
+      return e
     },
   };
 

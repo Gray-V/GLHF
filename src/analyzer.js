@@ -1,12 +1,10 @@
 import * as core from "./core.js";
-
 const INT = core.intType;
 const FLOAT = core.floatType;
 const STRING = core.stringType;
 const BOOLEAN = core.boolType;
 const ANY = core.anyType;
 const VOID = core.voidType;
-// console.log(ANY)
 
 class Context {
   constructor({
@@ -47,11 +45,7 @@ export default function analyze(match) {
     must(e1.type === e2.type, "Operands must have the same type", at);
   }
   function mustNotAlreadyBeDeclared(name, at) {
-    must(!context.lookup(name), `Identifier ${name} already declared`, at);
-  }
-
-  function mustMatchIdBlockNames(id1, id2, at) {
-    must(id1 === id2, "Enum names must match", at);
+    must(!context.lookup(name), "Identifier already declared", at);
   }
 
   function mustHaveBeenFound(entity, name, at) {
@@ -59,7 +53,6 @@ export default function analyze(match) {
   }
 
   function mustHaveNumericType(e, at) {
-    // console.log("e", e)
     must([INT, FLOAT].includes(e.type), "Expected a number", at);
   }
 
@@ -82,30 +75,13 @@ export default function analyze(match) {
   function mustHaveAnArrayType(e, at) {
     must(e.type?.kind === "ArrayType", "Expected an array", at);
   }
-
-  function mustHaveADictType(e, at) {
-    must(e.type?.kind === "DictType", "Expected a dictionary", at);
-  }
-
-  function mustHaveAnOptionalType(e, at) {
-    must(e.type?.kind === "OptionalType", "Expected an optional", at);
-  }
-
-  function mustHaveAStructType(e, at) {
-    must(e.type?.kind === "StructType", "Expected a struct", at);
-  }
-
-  function mustHaveFunction(e, at) {
-    must(e.type?.kind === "FunctionType", "Expected a function", at);
-  }
-
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(statements) {
       return core.program(statements.children.map((s) => s.rep()));
     },
 
-    Block(statements, _next) {
-      return statements.children.map((s) => s.rep());
+    Block(statements, next) {
+      return [...statements.children, ...next.children].flatMap(s => s.rep());
     },
 
     Enum_Block(statements, _arrow, exp) {
@@ -151,9 +127,9 @@ export default function analyze(match) {
       context = context.parent;
       return core.forRangeStatement(iterator, update, end, body);
     },
-
+// add tests
     For_iterable(_for, id, _in, exp, block, _glhf_end, _forEnd) {
-      const collection = exp.sourceString;
+      const collection = exp.rep();
       if (collection.type.kind === "ArrayType") {
         const iterator = core.variable(
           id.sourceString,
@@ -166,6 +142,8 @@ export default function analyze(match) {
         context = context.parent;
         return core.forStatement(iterator, collection, body);
       }
+
+      //Add tests
       if (collection.type.kind === "DictType") {
         const iterator = core.variable(
           id.sourceString,
@@ -180,19 +158,22 @@ export default function analyze(match) {
       }
     },
 
+    Return(_return) {
+      return core.shortReturnStatement();
+    },
+
     Return_something(_return, exp) {
       return core.returnStatement(exp);
     },
-
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
       const fun = core.fun(id.sourceString, ANY);
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });
       context.add(id.sourceString, fun);
       context = context.newChildContext({ inLoop: false, function: fun });
-      // console.log(fun)
       const param = params.rep();
 
       // Analyze body while still in child context
+      // console.dir(block, { depth: null })
       const body = block.rep();
 
       // Go back up to the outer context before returning
@@ -204,11 +185,8 @@ export default function analyze(match) {
       return _stmt.rep();
     },
 
-    // change name of enum??? DA VINKI?????
-    // Only part that doesn't work, will fix later
     Stmt_enum(_enum_symbol, exp, enum_block, _glhf_end, _enum_symbol2) {
       const test = exp.rep();
-      mustHaveFunction(test, { at: exp });
       context = context.newChildContext();
       const consequent = enum_block.rep();
       context = context.parent;
@@ -307,7 +285,7 @@ export default function analyze(match) {
     },
 
     id(_first, _rest) {
-      return core.variable(this.sourceString, ANY, false);
+      return context.lookup(this.sourceString) ?? core.variable(this.sourceString, ANY, false);
     },
 
     true(_) {
@@ -321,10 +299,6 @@ export default function analyze(match) {
     OpAss(id, op, exp) {
       const variable = context.lookup(id.sourceString);
       const source = exp.rep();
-      console.log("source", source.type);
-
-      // console.log("v=" , variable.Context,"s=" , source)
-      // context.add(relid.sourceString, variable);
       mustBothHaveTheSameType(variable, source, { at: op });
       return core.assignment(
         variable,
@@ -334,26 +308,27 @@ export default function analyze(match) {
 
     Method(exp1, _period, exp2) {
       const object = exp1.rep();
-      const method = exp2.rep();
-      method.type = core.functionType;
-      mustHaveFunction(method, { at: exp2 });
-      return core.methodCall(object, method);
+      const method = exp2.sourceString;
+      // method.type = core.functionType;
+      // mustHaveFunction(method, { at: exp2 });
+      return core.callExpression(object, method);
     },
 
     Array(_open, exps, _close) {
       const elements = exps.asIteration().children.map((e) => e.rep());
       const baseType = elements[0]?.type ?? ANY;
-      elements.type = core.arrayType(baseType);
-      return elements;
+      // elements.type = core.arrayType(baseType);
+      return new core.arrayExpression(elements);
     },
 
     Call(callee, _open, exps, _close) {
       const fun = callee.rep();
       const args = exps.asIteration().children.map((e) => e.rep());
-      args.forEach((a, i) =>
-        mustBothHaveTheSameType(a, fun.type.params[i], { at: _open })
-      );
-      return core.functionCall(fun, args);
+      // Not implemented yet
+      // args.forEach((a, i) =>
+      //   mustBothHaveTheSameType(a, fun.type.params[i], { at: _open })
+      // );
+      return core.callExpression(fun, args);
     },
 
     Path(_file, exps) {
@@ -361,14 +336,14 @@ export default function analyze(match) {
       return core.path(path);
     },
 
-    Wait(_wait, _open, num, _close) {
-      return core.waitStatement(num);
-    },
+    // Not implemented yet
+    // Wait(_wait, _open, num, _close) {
+    //   mustHaveNumericType(num, { at: num });
+    //   return core.waitStatement(num);
+    // },
 
-    //NOT DONE
     Index(id, _open, exp, _close) {
       const array = context.lookup(id.sourceString);
-      // console.log(array);
       const index = exp.rep();
       mustHaveAnArrayType(array, { at: id });
       mustHaveIntegerType(index, { at: exp });

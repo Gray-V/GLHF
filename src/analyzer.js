@@ -162,22 +162,19 @@ export default function analyze(match) {
       return core.shortReturnStatement();
     },
 
-    Return_something(_return, exp) {
-      return core.returnStatement(exp);
-    },
+    // Return_something(_return, exp) {
+    //   return core.returnStatement(exp);
+    // },
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
       const fun = core.fun(id.sourceString, ANY);
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });
       context.add(id.sourceString, fun);
       context = context.newChildContext({ inLoop: false, function: fun });
       const param = params.rep();
-
-      // Analyze body while still in child context
-      // console.dir(block, { depth: null })
       const body = block.rep();
-
-      // Go back up to the outer context before returning
       context = context.parent;
+      exp.rep();
+      // console.log(exp);
       return core.functionDeclaration(fun, param, body);
     },
 
@@ -316,7 +313,7 @@ export default function analyze(match) {
 
     Array(_open, exps, _close) {
       const elements = exps.asIteration().children.map((e) => e.rep());
-      const baseType = elements[0]?.type ?? ANY;
+      // const baseType = elements[0]?.type ?? ANY;
       // elements.type = core.arrayType(baseType);
       return new core.arrayExpression(elements);
     },

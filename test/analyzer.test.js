@@ -53,7 +53,7 @@ const semanticChecks = [
       "a = [1,2,3]\n a[1]=100\n",
   ],
   ["empty return", "Gameloop a ()\nreturn\n end a"],
-  ["return", "Function a ()\nreturn 1 end a"],
+  ["return", "Function a ()\nreturn 1\n end a"],
   ["ternary operator", "print(true ? 1 : 2)"],
   ["! operator", "print(!true)"],
   ["== operator", "print(1 == 1)"],

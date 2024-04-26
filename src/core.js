@@ -67,8 +67,8 @@ export function assignment(target, source) {
 
 export const breakStatement = { kind: "BreakStatement" };
 
-export function returnStatement(expression) {
-  return { kind: "ReturnStatement", expression };
+export function returnStatement(exp) {
+  return { kind: "ReturnStatement", exp };
 }
 
 export function shortReturnStatement() {
@@ -141,7 +141,6 @@ export function memberExpression(object, op, field) {
 }
 
 export function callExpression(callee, args) {
-  // console.log(args)
   return { kind: "FunctionCall", callee, args, type: callee.type };
 }
 

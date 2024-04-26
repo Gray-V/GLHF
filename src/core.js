@@ -86,10 +86,10 @@ export function enumBaselessStatement(test, consequent) {
 export function whileStatement(test, body) {
   return { kind: "WhileStatement", test, body };
 }
-
-export function waitStatement(count) {
-  return { kind: "WaitStatement", count };
-}
+// Not implemented yet
+// export function waitStatement(count) {
+//   return { kind: "WaitStatement", count };
+// }
 
 export function forStatement(iterator, collection, body) {
   return { kind: "ForStatement", iterator, collection, body };
@@ -140,7 +140,7 @@ export function memberExpression(object, op, field) {
   return { kind: "MemberExpression", object, op, field, type: field.type };
 }
 
-export function functionCall(callee, args) {
+export function callExpression(callee, args) {
   // console.log(args)
   return { kind: "FunctionCall", callee, args, type: callee.type };
 }

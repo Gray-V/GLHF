@@ -68,6 +68,7 @@ const semanticChecks = [
   // ["same type function call", "Function test(x)\nx += 1\nend test\nload(1)"],
   // ["wait function", "Function hello\nwait(1)\nend hello"],
   ["enum", "Function main()\n return 1\n end main\nFunction on_click()\n x = true\n return x\n end on_click\nstart_button = false\n~ on_click()\n'start_button' ->main()\nend ~"],
+
 ];
 
 // // Programs that are syntactically correct but have semantic errors

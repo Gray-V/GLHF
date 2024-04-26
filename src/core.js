@@ -5,14 +5,13 @@ export function program(statements) {
 export function variableDeclaration(variable, initializer) {
   return { kind: "VariableDeclaration", variable, initializer };
 }
-
 export function variable(name, readOnly, type) {
   return { kind: "Variable", name, readOnly, type };
 }
 
-export function typeDeclaration(type) {
-  return { kind: "TypeDeclaration", type };
-}
+// export function typeDeclaration(type) {
+//   return { kind: "TypeDeclaration", type };
+// }
 
 export const boolType = { kind: "BoolType" };
 export const intType = { kind: "IntType" };
@@ -21,13 +20,13 @@ export const stringType = { kind: "StringType" };
 export const voidType = { kind: "VoidType" };
 export const anyType = { kind: "AnyType" };
 
-export function structType(name, fields) {
-  return { kind: "StructType", name, fields };
-}
+// export function structType(name, fields) {
+//   return { kind: "StructType", name, fields };
+// }
 
-export function field(name, type) {
-  return { kind: "Field", name, type };
-}
+// export function field(name, type) {
+//   return { kind: "Field", name, type };
+// }
 
 export function functionDeclaration(fun, params, body) {
   return { kind: "FunctionDeclaration", fun, params, body };
@@ -49,17 +48,17 @@ export function functionType(paramTypes, returnType) {
   return { kind: "FunctionType", paramTypes, returnType };
 }
 
-export function optionalType(baseType) {
-  return { kind: "OptionalType", baseType };
-}
+// export function optionalType(baseType) {
+//   return { kind: "OptionalType", baseType };
+// }
 
-export function positiveCompoundAssignment(variable, num) {
-  return { kind: "positiveCompoundAssignmen", variable, num, type: floatType };
-}
+// export function positiveCompoundAssignment(variable, num) {
+//   return { kind: "positiveCompoundAssignmen", variable, num, type: floatType };
+// }
 
-export function negativeCompoundAssignment(variable, num) {
-  return { kind: "negativeCompoundAssignment", variable, num, type: floatType };
-}
+// export function negativeCompoundAssignment(variable, num) {
+//   return { kind: "negativeCompoundAssignment", variable, num, type: floatType };
+// }
 
 export function assignment(target, source) {
   return { kind: "Assignment", target, source };
@@ -67,9 +66,9 @@ export function assignment(target, source) {
 
 export const breakStatement = { kind: "BreakStatement" };
 
-export function returnStatement(exp) {
-  return { kind: "ReturnStatement", exp };
-}
+// export function returnStatement(exp) {
+//   return { kind: "ReturnStatement", exp };
+// }
 
 export function shortReturnStatement() {
   return { kind: "ShortReturnStatement" };
@@ -79,13 +78,13 @@ export function enumStatement(test, consequent, alternate) {
   return { kind: "EnumStatement", test, consequent, alternate };
 }
 
-export function enumBaselessStatement(test, consequent) {
-  return { kind: "EnumBaselessStatement", test, consequent };
-}
+// export function enumBaselessStatement(test, consequent) {
+//   return { kind: "EnumBaselessStatement", test, consequent };
+// }
 
-export function whileStatement(test, body) {
-  return { kind: "WhileStatement", test, body };
-}
+// export function whileStatement(test, body) {
+//   return { kind: "WhileStatement", test, body };
+// }
 // Not implemented yet
 // export function waitStatement(count) {
 //   return { kind: "WaitStatement", count };
@@ -111,9 +110,9 @@ export function unary(op, operand, type) {
   return { kind: "UnaryExpression", op, operand, type };
 }
 
-export function emptyOptional(baseType) {
-  return { kind: "EmptyOptional", baseType, type: optionalType(baseType) };
-}
+// export function emptyOptional(baseType) {
+//   return { kind: "EmptyOptional", baseType, type: optionalType(baseType) };
+// }
 
 export function subscript(array, index) {
   return {
@@ -128,25 +127,25 @@ export function arrayExpression(elements) {
   return { kind: "ArrayExpression", elements, type: arrayType(anyType) };
 }
 
-export function dictExpression(elements) {
-  return { kind: "DictExpression", elements, type: dictType(anyType) };
-}
+// export function dictExpression(elements) {
+//   return { kind: "DictExpression", elements, type: dictType(anyType) };
+// }
 
-export function emptyArray() {
-  return { kind: "EmptyArray", type: baseType };
-}
+// export function emptyArray() {
+//   return { kind: "EmptyArray", type: baseType };
+// }
 
-export function memberExpression(object, op, field) {
-  return { kind: "MemberExpression", object, op, field, type: field.type };
-}
+// export function memberExpression(object, op, field) {
+//   return { kind: "MemberExpression", object, op, field, type: field.type };
+// }
 
 export function callExpression(callee, args) {
   return { kind: "FunctionCall", callee, args, type: callee.type };
 }
 
-export function constructorCall(callee, args) {
-  return { kind: "ConstructorCall", callee, args, type: callee };
-}
+// export function constructorCall(callee, args) {
+//   return { kind: "ConstructorCall", callee, args, type: callee };
+// }
 
 export function path(path) {
   return { kind: "Path", path, type: arrayType(stringType) };

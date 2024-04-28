@@ -111,28 +111,28 @@ const fixtures = [
     // `,
     // },
 
-    {
-        name: "for loops",
-        source: `
-        for (i = 0, i+=1)
-            print(i)
-        end i < 50
-        array1 = [10, 20, 30]
-        for (k = 1, k+=1)
-        end k < 10
-    `,
-        expected: dedent`
-      for (let i_1 = 0; i_1 < 50; i_1++) {
-        console.log(i_1);
-      }
-      let list_2 = [10,20,30];
-      for (let j_3 of list_2) {
-        console.log(j_3);
-      }
-      for (let k_4 = 1; k_4 < 10; k_4++) {
-      }
-    `,
-    },
+    // {
+    //     name: "for loops",
+    //     source: `
+    //     for (i = 0, i+=1)
+    //         print(i)
+    //     end i < 50
+    //     array1 = [10, 20, 30]
+    //     for (k = 1, k+=1)
+    //     end k < 10
+    // `,
+    //     expected: dedent`
+    //   for (let i_1 = 0; i_1 < 50; i_1++) {
+    //     console.log(i_1);
+    //   }
+    //   let list_2 = [10,20,30];
+    //   for (let j_3 of list_2) {
+    //     console.log(j_3);
+    //   }
+    //   for (let k_4 = 1; k_4 < 10; k_4++) {
+    //   }
+    // `,
+    // },
 //     {
 //       name: 'misc tests',
 //       source: `

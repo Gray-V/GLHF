@@ -66,9 +66,9 @@ export function assignment(target, source) {
 
 export const breakStatement = { kind: "BreakStatement" };
 
-// export function returnStatement(exp) {
-//   return { kind: "ReturnStatement", exp };
-// }
+export function returnStatement(exp) {
+  return { kind: "ReturnStatement", exp };
+}
 
 export function shortReturnStatement() {
   return { kind: "ShortReturnStatement" };

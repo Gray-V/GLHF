@@ -122,10 +122,10 @@ export default function generate(program) {
     },
     //True and False unsure if correct
     true() {
-      return "true";
+      return this.true;
     },
     false() {
-      return "false";
+      return this.false;
     },
     OpAss(id, op, exp) {
       output.push(`${gen(id)} ${op} ${gen(exp)};`);

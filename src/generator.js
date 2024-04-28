@@ -4,7 +4,7 @@
 // translation as a string.
 
 export default function generate(program) {
-  const output = ["import pygame"];
+  const output = []
 
   // Variable and function names in JS will be suffixed with _1, _2, _3,
   // etc. This is because "switch", for example, is a legal name in GLHF,
@@ -22,7 +22,7 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
-    return generators[node.constructor.name](node);
+    return generators[node.kind]?.(node) ?? node;
   }
 
   const generators = {
@@ -73,7 +73,7 @@ export default function generate(program) {
     Return_something(e) {
       output.push(`return ${e};`);
     },
-    //Not done - Specify Types
+
     Stmt_function(id, params, block, exp) {
       output.push(`function ${gen(id)} (${gen(params).join(", ")}) {`);
       gen(block);
@@ -177,7 +177,6 @@ export default function generate(program) {
     Dictionary_format(exp1, exp2){
       return `${gen(exp1)}: ${gen(exp2)}`
     },
-
     num_float(e){
       return e
     },

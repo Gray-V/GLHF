@@ -1,7 +1,9 @@
 import * as core from "./core.js"
 
 export default function optimize(node) {
-    return optimizers[node.constructor.name](node)
+    console.log("Node constructor name:", node.constructor.name);
+    console.log(node)
+    return optimizers[node.kind]?.(node) ?? node
 }
 const optimizers = {
     Program(p) {
@@ -72,137 +74,23 @@ const optimizers = {
         e = optimize(e)
         return [s,e]
     },
+    Exp_unary(u,e){
+        u = optimize(u)
+        e = optimize(e)
+        return [u,e]
+
+        // e.op = optimize(e.op)
+        // e.operand = optimize(e.operand)
+        // if (e.operand.constructor === Number) {
+        //     if (e.op === "-") {
+        //         return -e.operand
+        //     }
+        // }
+        // return e
+    },
 
     //Expressions
-
-
-
-    true(e) {
-        return e
-    },
-    false(e) {
-        return e
-    },
-    OpAss(id, op, exp) {
-        id = optimize(id)
-        op = optimize(op)
-        exp = optimize(exp)
-        return [id, op, exp]
-    },
-
-    VariableDeclaration(d) {
-        d.variable = optimize(d.variable)
-        d.initializer = optimize(d.initializer)
-        return d
-    },
-    Print(p) {
-        p.argument = optimize(p.argument)
-        return p
-    },
-    Token(t) {
-        // All tokens get optimized away and basically replace with either their
-        // value (obtained by the analyzer for literals and ids) or simply with
-        // lexeme (if a plain symbol like an operator)
-        // ?? t.source
-        return t.value ?? t.lexeme
-    },
-    MapExpression(e) {
-        e.elements = optimize(e.elements)
-        return e
-    },
-    MapEntry(e) {
-        e.key = optimize(e.key)
-        e.value = optimize(e.value)
-        return e
-    },
-    Array(a) {
-        // Flatmap since each element can be an array
-        return a.flatMap(optimize)
-    },
-    ArrayExpression(e) {
-        e.elements = optimize(e.elements)
-        return e
-    },
-    ArrayType(e) {
-        e.baseType = optimize(e.baseType)
-        return e
-    },
-    EmptyArray(e) {
-        return e
-    },
-    MapType(e) {
-        e.keyType = optimize(e.keyType)
-        e.valueType = optimize(e.valueType)
-        return e
-    },
-    IfStatement(s) {
-        s.test = optimize(s.test)
-        s.consequent = optimize(s.consequent)
-        s.alternate = optimize(s.alternate)
-        for (let i = 0; i < s.test.length; i++) {
-            if (s.test[i].constructor === Boolean && s.test[i]) {
-                // Ask Dr. Toal what to do if we have lots of else-ifs because we can't rely on recursion.
-                return s.consequent[i]
-            }
-            if (
-                i === s.test.length - 1 &&
-                s.test[i].constructor === Boolean &&
-                !s.test[i]
-            ) {
-                return s.alternate
-            }
-        }
-        return s
-    },
-    Conditional(e) {
-        e.test = optimize(e.test)
-        e.consequent = optimize(e.consequent)
-        e.alternate = optimize(e.alternate)
-        if (e.test.constructor === Boolean) {
-            return e.test ? e.consequent : e.alternate
-        }
-        return e
-    },
-
-    WhileLoop(s) {
-        s.test = optimize(s.test)
-        if (s.test === false) {
-            // while false is a no-op
-            return []
-        }
-        s.body = optimize(s.body)
-        return s
-    },
-    ForLoop(s) {
-        s.variable = optimize(s.variable)
-        s.start = optimize(s.start)
-        s.end = optimize(s.end)
-        s.body = optimize(s.body)
-
-        if (s.start.constructor === Number) {
-            if (s.end.constructor === Number) {
-                if (s.start > s.end) {
-                    return []
-                }
-            }
-        }
-        return s
-    },
-    ReturnStatement(s) {
-        s.expression = optimize(s.expression)
-        return s
-    },
-    ShortReturnStatement(s) {
-        return s
-    },
-    BreakStatement(s) {
-        return s
-    },
-    Call(c) {
-        c.callee = optimize(c.callee)
-        c.args = optimize(c.args)
-        return c
-    },
+    //SPLIT
     BinaryExpression(e) {
         e.op = optimize(e.op)
         e.left = optimize(e.left)
@@ -244,39 +132,19 @@ const optimizers = {
         }
         return e
     },
-    UnaryExpression(e) {
-        e.op = optimize(e.op)
-        e.operand = optimize(e.operand)
-        if (e.operand.constructor === Number) {
-            if (e.op === "-") {
-                return -e.operand
-            }
-        }
+
+
+    true(e) {
         return e
     },
-    SubscriptExpression(e) {
-        e.array = optimize(e.array)
-        e.index = optimize(e.index)
+    false(e) {
         return e
     },
-    ClassDeclaration(e) {
-        // TODO: How to optimize class declarations
-        e.id = optimize(e.id)
-        e.constructorDec = optimize(e.constructorDec)
-        e.methods = optimize(e.methods)
-        return e
-    },
-    ConstructorDeclaration(e) {
-        // TODO: How to optimize class declarations
-        e.parameters = optimize(e.parameters)
-        e.body = optimize(e.body)
-        return e
-    },
-    Field(f) {
-        // TODO: should we optimize this for our language?
-        f.variable = optimize(f.variable)
-        f.initializer  = f.initializer.value
-        return f
+    OpAss(id, op, exp) {
+        id = optimize(id)
+        op = optimize(op)
+        exp = optimize(exp)
+        return [id, op, exp]
     },
     MethodDeclaration(d) {
         // TODO: How to do this?
@@ -286,51 +154,71 @@ const optimizers = {
         if (d.body) d.body = optimize(d.body)
         return d
     },
-    DotExpression(e) {
-        // TODO: How to do this?
-        e.object = optimize(e.object)
+    ArrayExpression(e) {
+        e.elements = optimize(e.elements)
         return e
     },
-    ThisExpression(e) {
-        // TODO: How to do this?
+    Call(c) {
+        c.callee = optimize(c.callee)
+        c.args = optimize(c.args)
+        return c
+    },
+    Path(c) {
+        c.object = optimize(c.object)
+        c.member = optimize(c.member)
+        return c
+    },
+    Wait(n) {
+        n = optimize(n)
+        return n
+    },
+    Index(id, exp) {    
+        id = optimize(id)
+        exp = optimize(exp)
+        return [id, exp]
+    },
+    Print(p) {
+        p.argument = optimize(p.argument)
+        return p
+    },
+    Dictionary(e) {
+        e.elements = optimize(e.elements)
         return e
     },
-    ObjectDec(e) {
-        // TODO: How to do this?
-        e.identifier = optimize(e.identifier)
-        e.args = optimize(e.args)
+    Dictionary_format(e) {
+        e.key = optimize(e.key)
+        e.value = optimize(e.value)
         return e
     },
-    DotCall(e) {
-        // TODO: How to do this?
-        e.object = optimize(e.object)
-        e.member = optimize(e.member)
+    IfStatement(s) {
+        s.test = optimize(s.test)
+        s.consequent = optimize(s.consequent)
+        s.alternate = optimize(s.alternate)
+        for (let i = 0; i < s.test.length; i++) {
+            if (s.test[i].constructor === Boolean && s.test[i]) {
+                // Ask Dr. Toal what to do if we have lots of else-ifs because we can't rely on recursion.
+                return s.consequent[i]
+            }
+            if (
+                i === s.test.length - 1 &&
+                s.test[i].constructor === Boolean &&
+                !s.test[i]
+            ) {
+                return s.alternate
+            }
+        }
+        return s
+    },
+
+
+    num_string(e) {
         return e
     },
-    FunctionDeclaration(d) {
-        d.fun = optimize(d.fun)
-        d.params = optimize(d.params)
-        if (d.body) d.body = optimize(d.body)
-        return d
-    },
-    Type(d) {
-        // TODO: ask dr. toal how to handle types in optimization this seems sus
-        d.type = d.description
-        return d
-    },
-    Variable(v) {
-        return v
-    },
-    Function(f) {
-        return f
-    },
-    Boolean(e) {
+    num_float(e) {
         return e
     },
-    String(e) {
+    num_int(e) {
         return e
     },
-    Number(e) {
-        return e
-    },
+
 }

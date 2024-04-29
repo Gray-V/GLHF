@@ -18,7 +18,7 @@ const optimizers = {
         b.statements = optimize(b.statements)
         return b
     },
-    Assignment(r,exp) {
+    Ass(r,exp) {
         r.source = optimize(r.source)
         exp.target = optimize(exp.target)
         if (r.source === exp.target) {
@@ -196,7 +196,6 @@ const optimizers = {
         s.alternate = optimize(s.alternate)
         for (let i = 0; i < s.test.length; i++) {
             if (s.test[i].constructor === Boolean && s.test[i]) {
-                // Ask Dr. Toal what to do if we have lots of else-ifs because we can't rely on recursion.
                 return s.consequent[i]
             }
             if (
@@ -209,7 +208,6 @@ const optimizers = {
         }
         return s
     },
-
 
     num_string(e) {
         return e

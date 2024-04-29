@@ -81,11 +81,11 @@ export default function analyze(match) {
     },
 
     Block(statements, next) {
-      return [...statements.children, ...next.children].flatMap(s => s.rep());
+      return core.block([...statements.children, ...next.children].flatMap(s => s.rep()));
     },
 
     Enum_Block(statements, _arrow, exp) {
-      return statements.children.map((s) => s.rep());
+      return core.enumBlock(statements.children.map((s) => s.rep()));
     },
 
     Ass(relid, _eq, exp) {
@@ -295,11 +295,13 @@ export default function analyze(match) {
 
     OpAss(id, op, exp) {
       const variable = context.lookup(id.sourceString);
+      mustHaveBeenFound(variable, id.sourceString, { at: id });
       const source = exp.rep();
       mustBothHaveTheSameType(variable, source, { at: op });
+      console.log('op', op.sourceString)
       return core.assignment(
         variable,
-        core.binary(op.sourceString, variable, source, variable.type)
+        core.binary(op.sourceString.charAt(0), variable, source, variable.type)
       );
     },
 

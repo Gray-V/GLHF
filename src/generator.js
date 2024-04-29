@@ -29,26 +29,41 @@ export default function generate(program) {
     // Key idea: when generating an expression, just return the JS string; when
     // generating a statement, write lines of translated JS to the output array.
     Program(p) {
-      gen(p.statements);
+      console.log('program', p)
+      // p.statements.forEach(gen);
+      p.statements.forEach(n => {
+        gen(n);
+      });
+    },
+    VariableDeclaration(v) {
+      console.log('vardec', v)
+      console.log('init', v.initializer)
+      output.push(`let ${gen(v.variable)} = ${gen(v.initializer)};`);
+    },
+    Variable(v) {
+      return targetName(v);
     },
     Block(b) {
-      for (s in b.statements) {
-        gen(s);
-      }
+      b.statements.forEach(gen);
+      // b.statements.forEach(n => {
+      //   console.log(n);
+      //   gen(n);
+      // });
     },
-    EnumBlock(b) {
-      for (s in b.statements) {
-        gen(s);
-      }
+    EnumBlock(e) {
+      // TODO
     },
     //Unsure about .initializer and .variable for r and e
-    Ass(r, e) {
-      output.push(`let ${gen(r)} = ${gen(e)};`);
+    Assignment(a) {
+      output.push(`${gen(a.target)} = ${gen(a.source)};`);
     },
     Params(p) {
       for (s in p.statements) {
         gen(s);
       }
+    },
+    FunctionCall(f) {
+      output.push(`${gen(f.callee)}(${gen(f.args).join(", ")});`);
     },
     For_increment(id, exp, block, end_exp) {
       // const i = targetName(s.variable)
@@ -70,72 +85,19 @@ export default function generate(program) {
         output.push(`}`);
       }
     },
-    Return_something(e) {
+    returnStatement(e) {
       output.push(`return ${e};`);
     },
-
-    Stmt_function(id, params, block, exp) {
-      output.push(`function ${gen(id)} (${gen(params).join(", ")}) {`);
-      gen(block);
+    functionDeclaration(f) {
+      output.push(`function ${gen(f.fun)}(${gen(f.params)}) {`);
+      gen(f.body);
       output.push("}");
-      output.push(`${gen(exp)}`);
     },
-    Stmt(s) {
-      output.push(`${gen(s)};`);
+    BinaryExpression(b) {
+      return `${gen(b.left)} ${b.operator} ${gen(b.right)}`;
     },
-    //Not sure - pushing frozen objects to output
-    Stmt_enum(e, block) {
-      output.push(`const ${gen(e)} = Object.freeze(
-                ${gen(block)}
-            )`);
-    },
-    Exp_unary(unaryOp, exp) {
-      const [op, operand] = [unaryOp.sourceString, exp.rep()];
-      return `${op}(${gen(operand)})`;
-    },
-    Exp_ternary(exp, exp1, exp2) {
-      return `((${gen(exp)}) ? (${gen(exp1)}) : (${gen(exp2)}))`;
-    },
-    Exp1_binary(exp, exp1) {
-      return `(${gen(exp)} | ${gen(exp1)})`;
-    },
-    Exp2_binary(exp, exp1) {
-      return `(${gen(exp)} & ${gen(exp1)})`;
-    },
-    Exp3_binary(exp, relop, exp1) {
-      return `(${gen(exp)} ${relop} ${gen(exp1)})`;
-    },
-    Exp4_binary(exp, addOp, exp1) {
-      return `(${gen(exp)} ${addOp} ${gen(exp1)})`;
-    },
-    Exp5_binary(exp, mulOp, exp1) {
-      return `(${gen(exp)} ${mulOp} ${gen(exp1)})`;
-    },
-    Exp6_binary(exp, exp1) {
-      return `(${gen(exp)} ** ${gen(exp1)})`;
-    },
-    Exp7_parens(exp) {
-      return `(${gen(exp)})`;
-    },
-    Exp7_id(id) {
-      return `${id.sourceString}`;
-    },
-    //True and False unsure if correct
-    true() {
-      return this.sourceString === "true";
-    },
-    false() {
-      return this.sourceString === "false";
-    },
-    OpAss(id, op, exp) {
-      output.push(`${gen(id)} ${op} ${gen(exp)};`);
-    },
-    Method(c){
-      output.push(
-        `${targetName(c.name)}(${gen(c.name.parameters).join(", ")}) {`
-      );
-      gen(c.body);
-      output.push("}");
+    Exp_unary(o) {
+      return `${o.operator}${gen(o.argument)}`;
     },
     Array(e){
       return `[${gen(e.elements).join(",")}]`;
@@ -163,19 +125,15 @@ export default function generate(program) {
     Wait(n){
       sleep(n)
     },
-    Index(id, exp){
-      return `${gen(id)}[${gen(exp)}]`;
+    Index(i){
+      return `${gen(i.id)}[${gen(i.exp)}]`;
     },
     Print(e){
-      const argument = gen(e.argument);
-      output.push(`console.log(${argument});`);
+      output.push(`console.log(${e.print.map(gen).join(", ")});`);
     },
     //Unsure how to implement
-    Dictionary(exps){
-      return `{${gen(exps).join(", ")}}`;
-    },
-    Dictionary_format(exp1, exp2){
-      return `${gen(exp1)}: ${gen(exp2)}`
+    dictExpression(e){
+      return `{${gen(e.elements).join(", ")}}`;
     },
     num_float(e){
       return e
@@ -184,6 +142,9 @@ export default function generate(program) {
       return e
     },
     string(e){
+      return e
+    },
+    boolean(e){
       return e
     },
   };

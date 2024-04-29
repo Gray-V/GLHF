@@ -2,6 +2,14 @@ export function program(statements) {
   return { kind: "Program", statements };
 }
 
+export function block(statements) {
+  return { kind: "Block", statements };
+}
+
+export function enumBlock(statements) {
+  return { kind: "EnumBlock", statements };
+}
+
 export function variableDeclaration(variable, initializer) {
   return { kind: "VariableDeclaration", variable, initializer };
 }
@@ -48,18 +56,6 @@ export function functionType(paramTypes, returnType) {
   return { kind: "FunctionType", paramTypes, returnType };
 }
 
-// export function optionalType(baseType) {
-//   return { kind: "OptionalType", baseType };
-// }
-
-// export function positiveCompoundAssignment(variable, num) {
-//   return { kind: "positiveCompoundAssignmen", variable, num, type: floatType };
-// }
-
-// export function negativeCompoundAssignment(variable, num) {
-//   return { kind: "negativeCompoundAssignment", variable, num, type: floatType };
-// }
-
 export function assignment(target, source) {
   return { kind: "Assignment", target, source };
 }
@@ -70,10 +66,6 @@ export function returnStatement(exp) {
   return { kind: "ReturnStatement", exp };
 }
 
-export function shortReturnStatement() {
-  return { kind: "ShortReturnStatement" };
-}
-
 export function enumStatement(test, consequent, alternate) {
   return { kind: "EnumStatement", test, consequent, alternate };
 }
@@ -82,21 +74,18 @@ export function enumStatement(test, consequent, alternate) {
 //   return { kind: "EnumBaselessStatement", test, consequent };
 // }
 
-// export function whileStatement(test, body) {
-//   return { kind: "WhileStatement", test, body };
-// }
 // Not implemented yet
-// export function waitStatement(count) {
-//   return { kind: "WaitStatement", count };
-// }
+export function waitStatement(count) {
+  return { kind: "WaitStatement", count };
+}
 
 export function forStatement(iterator, collection, body) {
   return { kind: "ForStatement", iterator, collection, body };
 }
 
-export function forRangeStatement(iterator, low, high, body) {
-  return { kind: "ForRangeStatement", iterator, low, high, body };
-}
+// export function forRangeStatement(iterator, low, high, body) {
+//   return { kind: "ForRangeStatement", iterator, low, high, body };
+// }
 
 export function conditional(test, consequent, alternate, type) {
   return { kind: "Conditional", test, consequent, alternate, type };
@@ -127,9 +116,9 @@ export function arrayExpression(elements) {
   return { kind: "ArrayExpression", elements, type: arrayType(anyType) };
 }
 
-// export function dictExpression(elements) {
-//   return { kind: "DictExpression", elements, type: dictType(anyType) };
-// }
+export function dictExpression(elements) {
+  return { kind: "DictExpression", elements, type: dictType(anyType) };
+}
 
 // export function emptyArray() {
 //   return { kind: "EmptyArray", type: baseType };

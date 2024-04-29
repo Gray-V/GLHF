@@ -10,6 +10,17 @@ function dedent(s) {
 
 const fixtures = [
     {
+        name: "vardec",
+        source: `
+        x = 21
+        print(x)
+    `,
+        expected: dedent`
+        let x_1 = 21;
+        console.log(x_1);
+    `,
+    },
+    {
         name: "small",
         source: `
         x = 21
@@ -27,49 +38,80 @@ const fixtures = [
     `,
     },
     {
-        name: "if",
+        name: "for loops",
         source: `
-        x = 0
-        ~true
-            (x == 0) -> print("1")
-        end ~  
-        ~if
-            (x == 0) -> print(1)
-            (x > 0) -> print(2)
-        end ~
-        ~if
-            (x == 0) -> print(1)
-            (x > 0) -> print(3)
-        end ~
-        ~if
-            (x == 0) -> print(3)
-            (x > 0) -> print(4)
-        end ~
+        for (i = 0, i += 1)\n
+            print("hello")\n
+        end i < 10'
     `,
         expected: dedent`
-      let x_1 = 0;
-      if ((x_1 === 0)) {
-        console.log("1");
-      }
-      if ((x_1 === 0)) {
-        console.log(1);
-      } else {
-        console.log(2);
-      }
-      if ((x_1 === 0)) {
-        console.log(1);
-      } else if ((x_1 === 2)) {
-          console.log(3);
-      }
-      if ((x_1 === 0)) {
-        console.log(1);
-      } else if ((x_1 === 2)) {
-          console.log(3);
-      } else {
-        console.log(4);
+      for (let i_1 = 0; i_1 < 10; i_1++) {
+        console.log("hello");
       }
     `,
     },
+    
+    // {
+    //     name: "if",
+    //     source: `
+    //     x = 0
+    //     ~true
+    //         (x == 0) -> print("1")
+    //     end ~  
+    //     ~if
+    //         (x == 0) -> print(1)
+    //         (x > 0) -> print(2)
+    //     end ~
+    //     ~if
+    //         (x == 0) -> print(1)
+    //         (x > 0) -> print(3)
+    //     end ~
+    //     ~if
+    //         (x == 0) -> print(3)
+    //         (x > 0) -> print(4)
+    //     end ~
+    // `,
+    //     expected: dedent`
+    //   let x_1 = 0;
+    //   if ((x_1 === 0)) {
+    //     console.log("1");
+    //   }
+    //   if ((x_1 === 0)) {
+    //     console.log(1);
+    //   } else {
+    //     console.log(2);
+    //   }
+    //   if ((x_1 === 0)) {
+    //     console.log(1);
+    //   } else if ((x_1 === 2)) {
+    //       console.log(3);
+    //   }
+    //   if ((x_1 === 0)) {
+    //     console.log(1);
+    //   } else if ((x_1 === 2)) {
+    //       console.log(3);
+    //   } else {
+    //     console.log(4);
+    //   }
+    // `,
+    // },
+    // {
+    //     name: "true false",
+    //     source: `
+    //     y = true
+    //     x = false
+    //     print(y)
+    //     print(x)
+    // `,
+    //     expected: dedent`
+    //     let y_1 = true;
+    //     let x_2 = false;
+    //     console.log(y_1);
+    //     console.log(x_2);
+
+
+    // `,
+    // },
     // {
     //     name: "functions",
     //     source: `

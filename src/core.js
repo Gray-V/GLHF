@@ -73,9 +73,9 @@ export function enumStatement(test, consequent, alternate) {
 // }
 
 // Not implemented yet
-export function waitStatement(count) {
-  return { kind: "WaitStatement", count };
-}
+// export function waitStatement(count) {
+//   return { kind: "WaitStatement", count };
+// }
 
 export function forStatement(iterator, collection, body) {
   return { kind: "ForStatement", iterator, collection, body };

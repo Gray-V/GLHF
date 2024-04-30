@@ -22,6 +22,7 @@ export default function generate(program) {
   })(new Map());
 
   function gen(node) {
+    // console.log('node', node)
     return generators[node.kind]?.(node) ?? node;
   }
 
@@ -88,7 +89,7 @@ export default function generate(program) {
       return `${gen(b.left)} ${b.operator} ${gen(b.right)}`;
     },
     UnaryExpression(o) {
-      return `${o.operator}${gen(o.argument)}`;
+      return `${o.operator}${gen(o.operand)}`;
     },
     ArrayExpression(e){
       return `[${gen(e.elements).join(",")}]`;

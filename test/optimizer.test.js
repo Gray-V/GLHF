@@ -12,11 +12,11 @@ const return1p1 = new core.returnStatement(new core.binary("+", 1, 1))
 const return2 = new core.returnStatement(2)
 const returnX = new core.returnStatement(x)
 const onePlusTwo = new core.binary("+", 1, 2)
-// const identity = Object.assign(new core.Function("id"), { body: returnX })
+const identity = Object.assign(new core.Function("id"), { body: returnX })
 const intFun = (body) => new core.functionDeclaration("f", [], "int", body)
-const callIdentity = (args) => new core.callExpression(identity, args)
-const or = (...d) => d.reduce((x, y) => new core.binary("or", x, y))
-const and = (...c) => c.reduce((x, y) => new core.binary("and", x, y))
+// const callIdentity = (args) => new core.variableDeclaration(identity, args)
+const or = (...d) => d.reduce((x, y) => new core.binary("||", x, y))
+const and = (...c) => c.reduce((x, y) => new core.binary("&&", x, y))
 const less = (x, y) => new core.binary("<", x, y)
 const eq = (x, y) => new core.binary("==", x, y)
 const times = (x, y) => new core.binary("*", x, y)
@@ -27,35 +27,35 @@ const map = (...entries) => new core.dictExpression(entries)
 // const conditional = (x, y, z) => new core.Conditional(x, y, z)
 
 const tests = [
-    // ["folds +", new core.binary("+", 5, 8), 13],
-    // ["folds -", new core.binary("-", 5n, 8n), -3n],
-    // ["folds *", new core.binary("*", 5, 8), 40],
-    // ["folds /", new core.binary("/", 5, 8), 0.625],
-    // ["folds **", new core.binary("**", 5, 8), 390625],
-    // ["folds %", new core.binary("%", 5, 8), 5],
-    // ["folds <", new core.binary("<", 5, 8), true],
-    // ["folds <=", new core.binary("<=", 5, 8), true],
-    // ["folds ==", new core.binary("==", 5, 8), false],
-    // ["folds !=", new core.binary("!=", 5, 8), true],
-    // ["folds >=", new core.binary(">=", 5, 8), false],
-    // ["folds >", new core.binary(">", 5, 8), false],
-    // ["optimizes +0", new core.binary("+", x, 0), x],
-    // ["optimizes -0", new core.binary("-", x, 0), x],
-    // ["optimizes *1", new core.binary("*", x, 1), x],
-    // ["optimizes /1", new core.binary("/", x, 1), x],
-    // ["optimizes *0", new core.binary("*", x, 0), 0],
-    // ["optimizes 0*", new core.binary("*", 0, x), 0],
-    // ["optimizes 0/", new core.binary("/", 0, x), 0],
-    // ["optimizes 0+", new core.binary("+", 0, x), x],
-    // ["optimizes 0-", new core.binary("-", 0, x), neg(x)],
-    // ["optimizes 1*", new core.binary("*", 1, x), x],
-    // ["folds negation", new core.unary("-", 8), -8],
-    // ["optimizes 1**", new core.binary("**", 1, x), 1],
-    // ["optimizes **0", new core.binary("**", x, 0), 1],
-    // ["removes left false from or", or(false, less(x, 1)), less(x, 1)],
-    // ["removes right false from or", or(less(x, 1), false), less(x, 1)],
-    // ["removes left true from and", and(true, less(x, 1)), less(x, 1)],
-    // ["removes right true from and", and(less(x, 1), true), less(x, 1)],
+    ["folds +", new core.binary("+", 5, 8), 13],
+    ["folds -", new core.binary("-", 5n, 8n), -3n],
+    ["folds *", new core.binary("*", 5, 8), 40],
+    ["folds /", new core.binary("/", 5, 8), 0.625],
+    ["folds **", new core.binary("**", 5, 8), 390625],
+    ["folds %", new core.binary("%", 5, 8), 5],
+    ["folds <", new core.binary("<", 5, 8), true],
+    ["folds <=", new core.binary("<=", 5, 8), true],
+    ["folds ==", new core.binary("==", 5, 8), false],
+    ["folds !=", new core.binary("!=", 5, 8), true],
+    ["folds >=", new core.binary(">=", 5, 8), false],
+    ["folds >", new core.binary(">", 5, 8), false],
+    ["optimizes +0", new core.binary("+", x, 0), x],
+    ["optimizes -0", new core.binary("-", x, 0), x],
+    ["optimizes *1", new core.binary("*", x, 1), x],
+    ["optimizes /1", new core.binary("/", x, 1), x],
+    ["optimizes *0", new core.binary("*", x, 0), 0],
+    ["optimizes 0*", new core.binary("*", 0, x), 0],
+    ["optimizes 0/", new core.binary("/", 0, x), 0],
+    ["optimizes 0+", new core.binary("+", 0, x), x],
+    ["optimizes 0-", new core.binary("-", 0, x), neg(x)],
+    ["optimizes 1*", new core.binary("*", 1, x), x],
+    ["folds negation", new core.unary("-", 8), -8],
+    ["optimizes 1**", new core.binary("**", 1, x), 1],
+    ["optimizes **0", new core.binary("**", x, 0), 1],
+    ["removes left false from or", or(false, less(x, 1)), less(x, 1)],
+    ["removes right false from or", or(less(x, 1), false), less(x, 1)],
+    ["removes left true from and", and(true, less(x, 1)), less(x, 1)],
+    ["removes right true from and", and(less(x, 1), true), less(x, 1)],
     // [
     //     "removes x=x at beginning",
     //     [new core.assignment(x, x), return1p1],
@@ -121,6 +121,7 @@ const tests = [
     // ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
     // ["optimizes in arguments", callIdentity([times(3, 5)]), callIdentity([15])],
 ]
+console.log(core.assignment(x, x))
 
 describe("The optimizer", () => {
     for (const [scenario, before, after] of tests) {

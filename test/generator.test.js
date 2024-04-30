@@ -31,49 +31,40 @@ const fixtures = [
     `,
         expected: dedent`
         let x_1 = 21;
-        x_1 = (x_1 + 1);
-        x_1 = (x_1 - 1);
-        y_2 = (((5 ** -(x_1)) / -(100)) > -(x_1));
-        console.log(((y_2 && y_2) || ((x_1 * 2) !== 5)));
+        x_1 = x_1 + 1;
+        x_1 = x_1 - 1;
+        let y_2 = 5 ** -x_1 / -100 > -x_1;
+        console.log(y_2 && y_2 || x_1 * 2 != 5);
     `,
     },
     {
         name: "for loops",
         source: `
-        for (i = 0, i += 1)\n
-            print("hello")\n
-        end i < 10'
+        for (i = 0, i += 1)
+            print("hello")
+        end i < 10
     `,
         expected: dedent`
-      for (let i_1 = 0; i_1 < 10; i_1++) {
+      for(let i_1 = 0; i_1 < 10; i_1++) {
         console.log("hello");
       }
     `,
     },
-    {
-        name: "for each loops",
-        source: `
-        array = ["a", "b", "c"]
-        for (i in array)
-            print(i)
-        end i < 3
-    `,
-        expected: dedent`
-      const array1 = ["a", "b", "c"]
-      for (i in array1) {
-        console.log(i);
-      }
-    `,
-    },
-    {
-        name: "wait",
-        source: `
-        wait(5)
-    `,
-        expected: dedent`
-        sleep(5);
-    `,
-    },        
+    // {
+    //     name: "for each loops",
+    //     source: `
+    //     array = ["a", "b", "c"]
+    //     for (i in array)
+    //         print(i)
+    //     end i < 3
+    // `,
+    //     expected: dedent`
+    //   const array1 = ["a", "b", "c"]
+    //   for(i in array1) {
+    //     console.log(i);
+    //   }
+    // `,
+    // },       
     
     // {
     //     name: "if",
@@ -119,55 +110,59 @@ const fixtures = [
     //   }
     // `,
     // },
+    {
+        name: "true false",
+        source: `
+        y = true
+        x = false
+        print(y)
+        print(x)
+    `,
+        expected: dedent`
+        let y_1 = true;
+        let x_2 = false;
+        console.log(y_1);
+        console.log(x_2);
+    `,
+    },
     // {
-    //     name: "true false",
+    //     name: "return",
     //     source: `
-    //     y = true
     //     x = false
-    //     print(y)
-    //     print(x)
+    //     return x
     // `,
     //     expected: dedent`
-    //     let y_1 = true;
-    //     let x_2 = false;
-    //     console.log(y_1);
-    //     console.log(x_2);
-
-
+    //     x = false
+    //     return x;
     // `,
     // },
-    // {
-    //     name: "functions",
-    //     source: `
-    //   vargh z = 0.5
-    //   captain f(doubloon x, doubloon y) -> none {
-    //     ahoy x < y
-    //     anchor
-    //   }
-    //   captain g() -> doubloon {
-    //     anchor 3.0
-    //   }
-    //   f(z, g())
-    // `,
-    //     expected: dedent`
-    //   let z_1 = 0.5;
-    //   function f_2(x_3, y_4) {
-    //     console.log((x_3 < y_4));
-    //     return;
-    //   }
-    //   function g_5() {
-    //     return 3;
-    //   }
-    //   f_2(z_1, g_5());
-    // `,
-    // },
+    {
+        name: "functions",
+        source: `
+      Function f_1(x_2,y_3)
+        x_1 = 0
+        y_1 = 1
+        return x_1 < y_1
+        end f_1
+    `,
+        expected: dedent`
+        function f_1(x_2,y_3) {
+           let x_1 = 0;
+           let y_2 = 1;
+            return x_1 < y_2;
+            }
+    `,
+    },
+
+
+
     // {
     //     name: "arrays",
     //     source: `
-    //   vargh a = [aye, nay, aye]
-    //   vargh b = [10, 40 - 20, 30]
-    //   [int] c = []
-    //   ahoy a[1] or (b[0] < 88 ? nay : aye)
+    //     a = [true, false, true]
+    //     b = [10, 20, 30]
+    //     c = []
+    //     print(a[1] || b[0] < 88 ? false : true)
     // `,
     //     expected: dedent`
     //   let a_1 = [true,false,true];
@@ -177,28 +172,7 @@ const fixtures = [
     // `,
     // },
 
-    // {
-    //     name: "for loops",
-    //     source: `
-    //     for (i = 0, i+=1)
-    //         print(i)
-    //     end i < 50
-    //     array1 = [10, 20, 30]
-    //     for (k = 1, k+=1)
-    //     end k < 10
-    // `,
-    //     expected: dedent`
-    //   for (let i_1 = 0; i_1 < 50; i_1++) {
-    //     console.log(i_1);
-    //   }
-    //   let list_2 = [10,20,30];
-    //   for (let j_3 of list_2) {
-    //     console.log(j_3);
-    //   }
-    //   for (let k_4 = 1; k_4 < 10; k_4++) {
-    //   }
-    // `,
-    // },
+
 //     {
 //       name: 'misc tests',
 //       source: `

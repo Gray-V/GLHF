@@ -163,8 +163,7 @@ export default function analyze(match) {
     },
 
     Return_something(_return, exp) {
-      const returnValue = exp.rep();
-      return core.returnStatement(returnValue);
+      return core.returnStatement(exp);
     },
 
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {

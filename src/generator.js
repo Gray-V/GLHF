@@ -48,7 +48,7 @@ export default function generate(program) {
       b.statements.forEach(gen);
     },
 
-    // TODO
+    // // TODO
     // EnumBlock(e) {
     //   e.statements.forEach(gen);
     // },
@@ -66,11 +66,11 @@ export default function generate(program) {
     //   output.push(`${targetCode};`);
     // },
 
-    ForRangeStatement(e) {
-      output.push(`for(let ${gen(e.iterator.variable)} = ${gen(e.iterator.initializer)}; ${gen(e.high)}; ${gen(e.iterator.variable)}++) {`);
-      gen(e.body);
-      output.push("}");
-    },
+    // ForRangeStatement(e) {
+    //   output.push(`for(let ${gen(e.iterator.variable)} = ${gen(e.iterator.initializer)}; ${gen(e.high)}; ${gen(e.iterator.variable)}++) {`);
+    //   gen(e.body);
+    //   output.push("}");
+    // },
 
     //TODO
     // ForStatement(e) {
@@ -79,30 +79,30 @@ export default function generate(program) {
     //   output.push("}");
     // },
 
-    //TODO -- exp returning undefined
-    ReturnStatement(e) {
-      output.push(`return ${e.exp};`);
-    },
-
-    ShortReturnStatement(){
-      output.push(`return;`);
-    },
+    //TODO
+    // ReturnStatement(e) {
+    //   output.push(`return ${e.exp};`);
+    // },
+    //TODO
+    // ShortReturnStatement(){
+    //   output.push(`return;`);
+    // },
 
     //TODO -- return not working + params getting extra chars when concatenating???
-    FunctionDeclaration(f) {
-      console.log('fun', f.fun);
-      console.log('params', f.params);
-      f.fun = gen(f.fun);
-      f.params.forEach(
-        p => { p = gen(p); }
-      );
-      const paramsString = f.params.map(p => p.name).join(', ');     
-      console.log('paramsString', paramsString)
+    // FunctionDeclaration(f) {
+    //   console.log('fun', f.fun);
+    //   console.log('params', f.params);
+    //   f.fun = gen(f.fun);
+    //   f.params.forEach(
+    //     p => { p = gen(p); }
+    //   );
+    //   const paramsString = f.params.map(p => p.name).join(', ');     
+    //   console.log('paramsString', paramsString)
       
-      output.push(`function ${f.fun.name}(${paramsString}) {`);
-      gen(f.body);
-      output.push("}");
-    },
+    //   output.push(`function ${f.fun.name}(${paramsString}) {`);
+    //   gen(f.body);
+    //   output.push("}");
+    // },
     BinaryExpression(b) {
       return `${gen(b.left)} ${b.op} ${gen(b.right)}`;
     },
@@ -110,9 +110,9 @@ export default function generate(program) {
       return `${o.op}${gen(o.operand)}`;
     },
     //TODO
-    ArrayExpression(e){
-      return `[${gen(e.elements).join(",")}]`;
-    },
+    // ArrayExpression(e){
+    //   return `[${gen(e.elements).join(",")}]`;
+    // },
     //TODO
     // Path(c){
     //   let targetCode = `${targetName(c.object)}.${targetName(

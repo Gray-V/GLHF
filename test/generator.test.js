@@ -125,17 +125,17 @@ const fixtures = [
         console.log(x_2);
     `,
     },
-    // {
-    //     name: "return",
-    //     source: `
-    //     x = false
-    //     return x
-    // `,
-    //     expected: dedent`
-    //     x = false
-    //     return x;
-    // `,
-    // },
+    {
+        name: "return",
+        source: `
+        x = false
+        return x
+    `,
+        expected: dedent`
+        x = false
+        return x;
+    `,
+    },
     {
         name: "functions",
         source: `

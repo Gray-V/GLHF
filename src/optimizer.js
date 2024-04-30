@@ -1,8 +1,8 @@
 import * as core from "./core.js"
 
 export default function optimize(node) {
-    console.log("Node constructor name:", node.constructor.name);
-    console.log(node)
+    // console.log("Node constructor name:", node.constructor.name);
+    // console.log(node)
     return optimizers[node.kind]?.(node) ?? node
 }
 const optimizers = {
@@ -15,12 +15,7 @@ const optimizers = {
         e.op = optimize(e.op)
         e.left = optimize(e.left)
         e.right = optimize(e.right)
-        if (e.op === "??") {
-          // Coalesce empty optional unwraps
-          if (e.left?.kind === "EmptyOptional") {
-            return e.right
-          }
-        } else if (e.op === "&&") {
+        if (e.op === "&&") {
           // Optimize boolean constants in && and ||
           if (e.left === true) return e.right
           if (e.right === true) return e.left
@@ -82,5 +77,4 @@ const optimizers = {
       ShortReturnStatement(s) {
         return s
       },
-      
 }

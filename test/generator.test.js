@@ -50,6 +50,30 @@ const fixtures = [
       }
     `,
     },
+    {
+        name: "for each loops",
+        source: `
+        array = ["a", "b", "c"]
+        for (i in array)
+            print(i)
+        end i < 3
+    `,
+        expected: dedent`
+      const array1 = ["a", "b", "c"]
+      for (i in array1) {
+        console.log(i);
+      }
+    `,
+    },
+    {
+        name: "wait",
+        source: `
+        wait(5)
+    `,
+        expected: dedent`
+        sleep(5);
+    `,
+    },        
     
     // {
     //     name: "if",

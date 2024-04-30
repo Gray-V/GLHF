@@ -159,12 +159,9 @@ export default function analyze(match) {
     },
 
     Return(_return) {
-      return core.shortReturnStatement();
+      return core.returnStatement();
     },
-
-    // Return_something(_return, exp) {
-    //   return core.returnStatement(exp);
-    // },
+    
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
       const fun = core.fun(id.sourceString, ANY);
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });

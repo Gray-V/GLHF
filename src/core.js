@@ -60,8 +60,6 @@ export function assignment(target, source) {
   return { kind: "Assignment", target, source };
 }
 
-export const breakStatement = { kind: "BreakStatement" };
-
 export function returnStatement(exp) {
   return { kind: "ReturnStatement", exp };
 }
@@ -83,9 +81,9 @@ export function forStatement(iterator, collection, body) {
   return { kind: "ForStatement", iterator, collection, body };
 }
 
-// export function forRangeStatement(iterator, low, high, body) {
-//   return { kind: "ForRangeStatement", iterator, low, high, body };
-// }
+export function forRangeStatement(iterator, low, high, body) {
+  return { kind: "ForRangeStatement", iterator, low, high, body };
+}
 
 export function conditional(test, consequent, alternate, type) {
   return { kind: "Conditional", test, consequent, alternate, type };

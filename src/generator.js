@@ -45,50 +45,41 @@ export default function generate(program) {
     },
     Block(b) {
       b.statements.forEach(gen);
-      // b.statements.forEach(n => {
-      //   console.log(n);
-      //   gen(n);
-      // });
     },
+
+    // TODO
     EnumBlock(e) {
-      // TODO
+      e.statements.forEach(gen);
     },
-    //Unsure about .initializer and .variable for r and e
+
     Assignment(a) {
       output.push(`${gen(a.target)} = ${gen(a.source)};`);
     },
-    Params(p) {
-      for (s in p.statements) {
-        gen(s);
+
+    //TODO
+    FunctionCall(c) {
+      const targetCode = `${gen(c.callee)}(${gen(c.args).join(", ")})`;
+      if (c.callee instanceof Type || c.callee.type.returnType !== Type.NONE) {
+        return targetCode;
       }
+      output.push(`${targetCode};`);
     },
-    FunctionCall(f) {
-      output.push(`${gen(f.callee)}(${gen(f.args).join(", ")});`);
-    },
-    For_increment(id, exp, block, end_exp) {
-      // const i = targetName(s.variable)
-      output.push(`for (let ${gen(id)}; ${gen(end_exp)}; ${gen(exp)}) {`);
-      gen(block);
+
+    ForRangeStatement(e) {
+      output.push(`for (let ${gen(e.iterator)} = ${gen(e.low)}; ${gen(e.iterator)} < ${gen(e.high)}; ${gen(e.iterator)}++) {`);
+      gen(e.body);
       output.push("}");
     },
-    For_iterable(id, exp, block) {
-      collection = exp.sourceString;
+    ForStatement(e) {
+      output.push(`for (${gen(e.iterator)} of ${gen(e.collection)}) {`);
+      gen(e.body);
+      output.push("}");
+    },
+    ReturnStatement(e) {
+      output.push(`return ${e.exp};`);
+    },
 
-      if (collection.type.kind == "ArrayType") {
-        output.push(`for (let ${gen(id)} of ${gen(exp)} {`);
-        gen(block);
-        output.push("}");
-      }
-      if (collection.type.kind == "DictType") {
-        output.push(`for (let ${gen(id)} of ${gen(exp)}.entries()) {`);
-        gen(block);
-        output.push(`}`);
-      }
-    },
-    returnStatement(e) {
-      output.push(`return ${e};`);
-    },
-    functionDeclaration(f) {
+    FunctionDeclaration(f) {
       output.push(`function ${gen(f.fun)}(${gen(f.params)}) {`);
       gen(f.body);
       output.push("}");
@@ -96,19 +87,11 @@ export default function generate(program) {
     BinaryExpression(b) {
       return `${gen(b.left)} ${b.operator} ${gen(b.right)}`;
     },
-    Exp_unary(o) {
+    UnaryExpression(o) {
       return `${o.operator}${gen(o.argument)}`;
     },
-    Array(e){
+    ArrayExpression(e){
       return `[${gen(e.elements).join(",")}]`;
-    },
-    Call(c){
-      const targetCode = `${gen(c.callee)}(${gen(c.args).join(", ")})`;
-      // Calls in expressions vs in statements are handled differently
-      if (c.callee instanceof Type || c.callee.type.returnType !== Type.NONE) {
-        return targetCode;
-      }
-      output.push(`${targetCode};`);
     },
     Path(c){
       let targetCode = `${targetName(c.object)}.${targetName(
@@ -123,32 +106,15 @@ export default function generate(program) {
       output.push(`${targetCode};`);
     },
     Wait(n){
-      sleep(n)
-    },
-    Index(i){
-      return `${gen(i.id)}[${gen(i.exp)}]`;
+      output.push(`sleep(${gen(n.count)});`);
     },
     Print(e){
       output.push(`console.log(${e.print.map(gen).join(", ")});`);
     },
-    //Unsure how to implement
-    dictExpression(e){
+    DictExpression(e){
       return `{${gen(e.elements).join(", ")}}`;
     },
-    num_float(e){
-      return e
-    },
-    num_int(e){
-      return e
-    },
-    string(e){
-      return e
-    },
-    boolean(e){
-      return e
-    },
   };
-
   gen(program);
   return output.join("\n");
 }

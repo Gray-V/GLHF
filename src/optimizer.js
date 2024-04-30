@@ -50,11 +50,10 @@ const optimizers = {
       s.body = optimize(s.body)
       if (s.expression.constructor === core.EmptyArray) {
           return []
-      } // TODO !!!
+      }
       return s
     },
-    
-    Return_something(e){
+    Return(e){
         e = optimize(e)
         return e
     },
@@ -78,17 +77,7 @@ const optimizers = {
         u = optimize(u)
         e = optimize(e)
         return [u,e]
-
-        // e.op = optimize(e.op)
-        // e.operand = optimize(e.operand)
-        // if (e.operand.constructor === Number) {
-        //     if (e.op === "-") {
-        //         return -e.operand
-        //     }
-        // }
-        // return e
     },
-
     //Expressions
     //SPLIT
     BinaryExpression(e) {
@@ -132,8 +121,6 @@ const optimizers = {
         }
         return e
     },
-
-
     true(e) {
         return e
     },
@@ -190,25 +177,6 @@ const optimizers = {
         e.value = optimize(e.value)
         return e
     },
-    IfStatement(s) {
-        s.test = optimize(s.test)
-        s.consequent = optimize(s.consequent)
-        s.alternate = optimize(s.alternate)
-        for (let i = 0; i < s.test.length; i++) {
-            if (s.test[i].constructor === Boolean && s.test[i]) {
-                return s.consequent[i]
-            }
-            if (
-                i === s.test.length - 1 &&
-                s.test[i].constructor === Boolean &&
-                !s.test[i]
-            ) {
-                return s.alternate
-            }
-        }
-        return s
-    },
-
     num_string(e) {
         return e
     },

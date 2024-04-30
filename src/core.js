@@ -13,6 +13,7 @@ export function enumBlock(statements) {
 export function variableDeclaration(variable, initializer) {
   return { kind: "VariableDeclaration", variable, initializer };
 }
+
 export function variable(name, readOnly, type) {
   return { kind: "Variable", name, readOnly, type };
 }
@@ -114,9 +115,9 @@ export function arrayExpression(elements) {
   return { kind: "ArrayExpression", elements, type: arrayType(anyType) };
 }
 
-export function dictExpression(elements) {
-  return { kind: "DictExpression", elements, type: dictType(anyType) };
-}
+// export function dictExpression(elements) {
+//   return { kind: "DictExpression", elements, type: dictType(anyType) };
+// }
 
 // export function emptyArray() {
 //   return { kind: "EmptyArray", type: baseType };

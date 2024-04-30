@@ -12,9 +12,9 @@ const return1p1 = new core.returnStatement(new core.binary("+", 1, 1))
 const return2 = new core.returnStatement(2)
 const returnX = new core.returnStatement(x)
 const onePlusTwo = new core.binary("+", 1, 2)
-const identity = Object.assign(new core.Function("id"), { body: returnX })
+const identity = Object.assign(new core.functionDeclaration("id"), { body: returnX })
 const intFun = (body) => new core.functionDeclaration("f", [], "int", body)
-// const callIdentity = (args) => new core.variableDeclaration(identity, args)
+const callIdentity = (args) => new core.variableDeclaration(identity, args)
 const or = (...d) => d.reduce((x, y) => new core.binary("||", x, y))
 const and = (...c) => c.reduce((x, y) => new core.binary("&&", x, y))
 const less = (x, y) => new core.binary("<", x, y)
@@ -119,7 +119,7 @@ const tests = [
     // ],
     // ["optimizes in subscripts", sub(x, onePlusTwo), sub(x, 3)],
     // ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
-    // ["optimizes in arguments", callIdentity([times(3, 5)]), callIdentity([15])],
+    ["optimizes in arguments", callIdentity([times(3, 5)]), callIdentity([15])],
 ]
 console.log(core.assignment(x, x))
 

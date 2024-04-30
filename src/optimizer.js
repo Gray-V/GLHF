@@ -11,7 +11,6 @@ const optimizers = {
         d.initializer = optimize(d.initializer)
         return d
       },
-
     BinaryExpression(e) {
         e.op = optimize(e.op)
         e.left = optimize(e.left)
@@ -58,7 +57,6 @@ const optimizers = {
         }
         return e
       },
-
       UnaryExpression(e) {
         e.op = optimize(e.op)
         e.operand = optimize(e.operand)
@@ -77,8 +75,12 @@ const optimizers = {
         }
         return s
       },
-
+      ReturnStatement(s) {
+        s.exp = optimize(s.exp)
+        return s
+      },
+      ShortReturnStatement(s) {
+        return s
+      },
       
-
-
 }

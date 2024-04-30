@@ -141,16 +141,17 @@ const fixtures = [
         source: `
       Function f_1(x_2,y_3)
         x_1 = 0
-        y_1 = 1
-        return x_1 < y_1
+        y_2 = 1
+        x_2 = 2 - x_1
         end f_1
     `,
         expected: dedent`
         function f_1(x_2,y_3) {
            let x_1 = 0;
            let y_2 = 1;
-            return x_1 < y_2;
-            }
+           x_2 = 2 - x_1;
+           return x_2;
+        }
     `,
     },
 

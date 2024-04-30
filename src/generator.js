@@ -71,6 +71,7 @@ export default function generate(program) {
       gen(e.body);
       output.push("}");
     },
+
     //TODO
     // ForStatement(e) {
     //   output.push(`for (${gen(e.iterator)} of ${gen(e.collection)}) {`);
@@ -78,18 +79,27 @@ export default function generate(program) {
     //   output.push("}");
     // },
 
-    //TODO
-    // ReturnStatement(e) {
-    //   output.push(`return ${e.exp};`);
-    // },
+    //TODO -- exp returning undefined
+    ReturnStatement(e) {
+      output.push(`return ${e.exp};`);
+    },
+
+    ShortReturnStatement(){
+      output.push(`return;`);
+    },
+
+    //TODO -- return not working + params getting extra chars when concatenating???
     FunctionDeclaration(f) {
-      console.log('fun', f.fun)
-      console.log('params', f.params)
-      f.fun = gen(f.fun)
+      console.log('fun', f.fun);
+      console.log('params', f.params);
+      f.fun = gen(f.fun);
       f.params.forEach(
-        p => {p = gen(p)}
-      )
-      output.push(`function ${f.fun.name}(${f.params}) {`);
+        p => { p = gen(p); }
+      );
+      const paramsString = f.params.map(p => p.name).join(', ');     
+      console.log('paramsString', paramsString)
+      
+      output.push(`function ${f.fun.name}(${paramsString}) {`);
       gen(f.body);
       output.push("}");
     },
@@ -100,9 +110,9 @@ export default function generate(program) {
       return `${o.op}${gen(o.operand)}`;
     },
     //TODO
-    // ArrayExpression(e){
-    //   return `[${gen(e.elements).join(",")}]`;
-    // },
+    ArrayExpression(e){
+      return `[${gen(e.elements).join(",")}]`;
+    },
     //TODO
     // Path(c){
     //   let targetCode = `${targetName(c.object)}.${targetName(

@@ -159,7 +159,12 @@ export default function analyze(match) {
     },
 
     Return(_return) {
-      return core.returnStatement();
+      return core.shortReturnStatement();
+    },
+
+    Return_something(_return, exp) {
+      const returnValue = exp.rep();
+      return core.returnStatement(returnValue);
     },
 
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
@@ -310,7 +315,7 @@ export default function analyze(match) {
       return core.callExpression(object, method);
     },
 
-    Array(_open, exps, _close) {
+    Array(_open, exps, _close) { 
       const elements = exps.asIteration().children.map((e) => e.rep());
       // const baseType = elements[0]?.type ?? ANY;
       // elements.type = core.arrayType(baseType);

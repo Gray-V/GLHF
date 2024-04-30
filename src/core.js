@@ -65,6 +65,10 @@ export function returnStatement(exp) {
   return { kind: "ReturnStatement", exp };
 }
 
+export function shortReturnStatement() {
+  return { kind: "ShortReturnStatement"};
+}
+
 export function enumStatement(test, consequent, alternate) {
   return { kind: "EnumStatement", test, consequent, alternate };
 }

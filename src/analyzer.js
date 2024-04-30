@@ -161,7 +161,7 @@ export default function analyze(match) {
     Return(_return) {
       return core.returnStatement();
     },
-    
+
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
       const fun = core.fun(id.sourceString, ANY);
       mustNotAlreadyBeDeclared(id.sourceString, { at: id });

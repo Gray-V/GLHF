@@ -18,13 +18,13 @@ const optimizers = {
         b.statements = optimize(b.statements)
         return b
     },
-    Ass(r,exp) {
-        r.source = optimize(r.source)
-        exp.target = optimize(exp.target)
-        if (r.source === exp.target) {
+    Ass(e) {
+        e.relid = optimize(s.relid)
+        e.exp = optimize(s.exp)
+        if (e.relid === e.exp) {
             return []
         }
-        return r
+        return e
     },
     Params(p) {
       for (param in p.statements){
@@ -32,93 +32,167 @@ const optimizers = {
       }
       return p
     },
-    For_increment(id, exp, block){
-        id = optimize(id)
-        exp = optimize(exp)
-        block = optimize(block)
-        return [id, exp, block]
+    For_increment(e){
+        e.assignment = optimize(e.assignment)
+        e.updateExp = optimize(e.updateExp)
+        e.endExp = optimize(e.endExp)
+        e.block = optimize(e.block)
+
+        if (e.updateExp.constructor === Number) {
+            if (e.endExp.constructor === Number) {
+                if (e.updateExp > e.endExp) {
+                    return []
+                }
+            }
+        }
+        return e
     },
-    For_iterable(id, exp, block){
-        id = optimize(id)
-        exp = optimize(exp)
-        block = optimize(block)
-        return [id, exp, block]
-    },
-    ForEachLoop(s) {
-      s.variable = optimize(s.variable)
-      s.expression = optimize(s.expression)
-      s.body = optimize(s.body)
-      if (s.expression.constructor === core.EmptyArray) {
-          return []
-      }
-      return s
+    For_iterable(e){
+        e.id = optimize(e.id)
+        e.exp = optimize(e.exp)
+        e.block = optimize(e.block)
+        //TODO
+        if (e.exp.constructor === core.EmptyArray) {
+            return []
+        }
+        return e
     },
     Return(e){
         e = optimize(e)
         return e
     },
-    Stmt_function(id, params, block, exp){ 
-        id = optimize(id)
-        params = optimize(params)
-        block = optimize(block)
-        exp = optimize(exp)
-        return [id, params, block, exp]
+    Stmt_function(s){ 
+        s.id = optimize(s.id)
+        s.params = optimize(s.params)
+        if (s.block) s.block = optimize(s.block)
+        return s
     },
     Stmt(s){
         s = optimize(s)
         return s
     },
-    Stmt_enum(s,e){
-        s = optimize(s)
+
+    //TODO
+    Stmt_enum(e){
         e = optimize(e)
-        return [s,e]
+        return e
     },
-    Exp_unary(u,e){
-        u = optimize(u)
-        e = optimize(e)
-        return [u,e]
+    //TODO
+    Exp_unary(e){
+        e.op = optimize(e.op)
+        e.operand = optimize(e.operand)
+        if (e.operand.constructor === Number) {
+            if (e.op === "-") {
+                return -e.operand
+            }
+            else if (e.op === "!") {
+                return !e.operand
+            }
+        }
+        return e
     },
-    //Expressions
-    //SPLIT
-    BinaryExpression(e) {
+    Exp_ternary(e){
+        e.exp = optimize(e.exp)
+        e.exp1 = optimize(e.exp1)
+        e.exp2 = optimize(e.exp2)
+        if (e.exp === true) return e.exp2
+        else if (e.exp === false) return e.exp2
+        return e
+    },
+    Exp1_binary(e) {
+        e.relop = optimize(e.relop)
+        e.exp1 = optimize(e.exp1)
+        e.exp2 = optimize(e.exp2)
+        if (e.relop === "||") {
+            // Optimize boolean constants in && and ||
+            if (e.exp1 === true) return e.exp2
+            else if (e.exp2 === true) return e.exp1
+        }
+        return e
+    },
+    Exp2_binary(e) {
+        e.relop = optimize(e.relop)
+        e.exp1 = optimize(e.exp1)
+        e.exp2 = optimize(e.exp2)
+        if (e.relop === "&&") {
+            // Optimize boolean constants in && and ||
+            if (e.exp1 === true) return e.exp2
+            else if (e.exp2 === true) return e.exp1
+        }
+        return e
+    },
+    Exp3_binary(e) {
         e.op = optimize(e.op)
         e.left = optimize(e.left)
         e.right = optimize(e.right)
-        if (e.op === "and") {
-            // Optimize boolean constants in && and ||
-            if (e.left === true) return e.right
-            else if (e.right === true) return e.left
-        } else if (e.op === "or") {
-            if (e.left === false) return e.right
-            else if (e.right === false) return e.left
-        } else if ([Number, BigInt].includes(e.left.constructor)) {
-            // Numeric constant folding when left operand is constant
+        if ([Number, BigInt].includes(e.left.constructor)) {
             if ([Number, BigInt].includes(e.right.constructor)) {
-                if (e.op === "+") return e.left + e.right
-                else if (e.op === "-") return e.left - e.right
-                else if (e.op === "*") return e.left * e.right
-                else if (e.op === "/") return e.left / e.right
-                else if (e.op === "**") return e.left ** e.right
-                else if (e.op === "%") return e.left % e.right
-                else if (e.op === "<") return e.left < e.right
+                if (e.op === "<") return e.left < e.right
                 else if (e.op === "<=") return e.left <= e.right
                 else if (e.op === "==") return e.left === e.right
                 else if (e.op === "!=") return e.left !== e.right
                 else if (e.op === ">=") return e.left >= e.right
                 else if (e.op === ">") return e.left > e.right
-            } else if (e.left === 0 && e.op === "+") return e.right
-            else if (e.left === 1 && e.op === "*") return e.right
-            else if (e.left === 0 && e.op === "-")
-                return new core.UnaryExpression("-", e.right)
-            else if (e.left === 1 && e.op === "**") return 1
-            else if (e.left === 0 && ["*", "/"].includes(e.op)) return 0
+            }
+        } 
+        return e
+    },
+    Exp4_binary(e) { 
+        e.op = optimize(e.op)
+        e.left = optimize(e.left)
+        e.right = optimize(e.right)
+        if ([Number, BigInt].includes(e.left.constructor)) {
+            if ([Number, BigInt].includes(e.right.constructor)) {
+                if (e.op === "+") return e.left + e.right
+                else if (e.op === "-") return e.left - e.right
+            }
         } else if (e.right.constructor === Number) {
             // Numeric constant folding when right operand is constant
             if (["+", "-"].includes(e.op) && e.right === 0) return e.left
-            else if (["*", "/"].includes(e.op) && e.right === 1) return e.left
-            else if (e.op === "*" && e.right === 0) return 0
-            else if (e.op === "**" && e.right === 0) return 1 // TODO: What to do about %
+        } 
+        return e
+    },
+    Exp5_binary(e) {
+        e.op = optimize(e.op)
+        e.left = optimize(e.left)
+        e.right = optimize(e.right)
+        if ([Number, BigInt].includes(e.left.constructor)) {
+            if ([Number, BigInt].includes(e.right.constructor)) {
+                if (e.op === "*") return e.left * e.right
+                else if (e.op === "/") return e.left / e.right
+                else if (e.op === "%") return e.left % e.right
+            }
+        } else if (e.right.constructor === Number) {
+            // Numeric constant folding when right operand is constant
+            if (["*", "/"].includes(e.op) && e.right === 1) return e.left
         }
+        return e
+    },
+    Exp6_binary(e) {
+        e.op = optimize(e.op)
+        e.left = optimize(e.left)
+        e.right = optimize(e.right)
+        if ([Number, BigInt].includes(e.left.constructor)) {
+            if ([Number, BigInt].includes(e.right.constructor)) {
+                if (e.op === "**") return e.left ** e.right
+            }
+        } 
+        else if (e.right.constructor === Number) {
+            // Numeric constant folding when right operand is constant
+            if (e.op === "**" && e.right === 0) return 1 // TODO: What to do about %
+        }
+        return e
+    },
+    Exp7_parens(e) {
+        e = optimize(e)
+        return e
+    },
+    Exp7_id(e) {
+        e = optimize(e)
+        return e
+    },
+    id(e){
+        e = optimize(e)
         return e
     },
     true(e) {
@@ -127,21 +201,23 @@ const optimizers = {
     false(e) {
         return e
     },
-    OpAss(id, op, exp) {
-        id = optimize(id)
-        op = optimize(op)
-        exp = optimize(exp)
-        return [id, op, exp]
+    OpAss(e) {
+        e.id = optimize(e.id)
+        e.exp = optimize(e.exp)
+        e.op = optimize(e.op)
+        if (e.relid === e.exp) {
+            return []
+        }
+        return e
     },
-    MethodDeclaration(d) {
-        // TODO: How to do this?
-        d.name = optimize(d.name)
-        d.returnType = optimize(d.returnType)
-        d.params = optimize(d.params)
-        if (d.body) d.body = optimize(d.body)
+    Method(d) {
+        d.object = optimize(d.object)
+        d.method = optimize(d.method)
+        // if (d.body) d.body = optimize(d.body)
         return d
     },
-    ArrayExpression(e) {
+    //TODO?
+    Array(e) {
         e.elements = optimize(e.elements)
         return e
     },
@@ -155,14 +231,10 @@ const optimizers = {
         c.member = optimize(c.member)
         return c
     },
-    Wait(n) {
-        n = optimize(n)
-        return n
-    },
-    Index(id, exp) {    
-        id = optimize(id)
-        exp = optimize(exp)
-        return [id, exp]
+    Index(e) {    
+        e.id = optimize(e.id)
+        e.exp = optimize(e.exp)
+        return e
     },
     Print(p) {
         p.argument = optimize(p.argument)

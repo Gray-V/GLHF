@@ -17,6 +17,7 @@ class Context {
   }
   add(name, entity) {
     this.locals.set(name, entity);
+    return entity;
   }
   lookup(name) {
     return this.locals.get(name) || this.parent?.lookup(name);
@@ -89,20 +90,23 @@ export default function analyze(match) {
     },
 
     Ass(relid, _eq, exp) {
+      const relidName = relid.sourceString;
+      let variable = context.lookup(relidName);
       const initializer = exp.rep();
-      const variable = core.variable(
-        relid.sourceString,
-        false,
-        initializer.type
-      );
-      // Handle index vs id for declaration
-      mustNotAlreadyBeDeclared(relid.sourceString, { at: relid });
-      context.add(relid.sourceString, variable);
-      return core.variableDeclaration(variable, initializer);
+      if (!variable) {
+        variable = core.variable(
+          relidName,
+          false,
+          initializer.type
+        );
+        context.add(relidName, variable);
+        return core.variableDeclaration(variable, initializer);
+      }
+      return core.assignment(variable, initializer);
     },
 
     Params(_open, paramList, _close) {
-      return paramList.asIteration().children.map((p) => p.rep());
+      return core.paramList(paramList.asIteration().children.map((p) => p.rep()));
     },
 
     For_increment(
@@ -254,6 +258,7 @@ export default function analyze(match) {
       } else {
         mustHaveNumericType(left, { at: exp1 });
       }
+      // TODO fix
       mustBothHaveTheSameType(left, right, { at: addOp });
       return core.binary(op, left, right, left.type);
     },
@@ -280,11 +285,11 @@ export default function analyze(match) {
       // When an id appears in an expression, it had better have been declared
       const entity = context.lookup(id.sourceString);
       mustHaveBeenFound(entity, id.sourceString, { at: id });
-      return entity;
+      return entity;x
     },
 
     id(_first, _rest) {
-      return context.lookup(this.sourceString) ?? core.variable(this.sourceString, ANY, false);
+      return context.lookup(this.sourceString) ?? context.add(this.sourceString, core.variable(this.sourceString, ANY, false));
     },
 
     true(_) {

@@ -15,9 +15,7 @@ export default function generate(program) {
       if (!mapping.has(entity)) {
         mapping.set(entity, mapping.size + 1);
       }
-      return `${entity.name ?? entity.description ?? entity.id}_${mapping.get(
-        entity
-      )}`;
+      return `${entity.name}_${mapping.get(entity)}`;
     };
   })(new Map());
 
@@ -90,18 +88,17 @@ export default function generate(program) {
 
     //TODO -- return not working + params getting extra chars when concatenating???
     FunctionDeclaration(f) {
-      console.log('fun', f.fun);
-      console.log('params', f.params);
-      f.fun = gen(f.fun);
-      f.params.forEach(
-        p => { p = gen(p); }
-      );
-      const paramsString = f.params.map(p => p.name).join(', ');     
-      console.log('paramsString', paramsString)
-      
-      output.push(`function ${f.fun.name}(${paramsString}) {`);
+      const fName = gen(f.fun);
+      const paramsString = gen(f.params);           
+      output.push(`function ${fName}(${paramsString}) {`);
       gen(f.body);
       output.push("}");
+    },
+    Function(f) {
+      return targetName(f);
+    },
+    ParamList(p) {
+      return p.params.map(gen).join(", ");
     },
     BinaryExpression(b) {
       return `${gen(b.left)} ${b.op} ${gen(b.right)}`;

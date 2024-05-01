@@ -6,6 +6,10 @@ export default function optimize(node) {
     return optimizers[node.kind]?.(node) ?? node
 }
 const optimizers = {
+    Program(p) {
+        p.statements = p.statements.flatMap(optimize);
+        return p;
+    },
     VariableDeclaration(d) {
         d.variable = optimize(d.variable)
         d.initializer = optimize(d.initializer)
@@ -68,6 +72,8 @@ const optimizers = {
         return e
       },
       Assignment(s) {
+        console.log("hello")
+        console.log(s.source)
         s.source = optimize(s.source)
         s.target = optimize(s.target)
         if (s.source === s.target) {
@@ -81,6 +87,15 @@ const optimizers = {
       },
       ShortReturnStatement(s) {
         return s
+      },
+      FunctionDeclaration(d) {
+        d.fun = optimize(d.fun)
+        if (d.body.statements) d.body.statements = d.body.statements.flatMap(optimize)
+        return d
+      },
+      ArrayExpression(e) {
+        e.elements = e.elements.map(optimize)
+        return e
       },
       
 }

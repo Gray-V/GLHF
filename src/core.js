@@ -41,6 +41,10 @@ export function functionDeclaration(fun, params, body) {
   return { kind: "FunctionDeclaration", fun, params, body };
 }
 
+export function paramList(params) {
+  return { kind: "ParamList", params };
+}
+
 export function fun(name, type) {
   return { kind: "Function", name, type };
 }

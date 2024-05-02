@@ -91,7 +91,7 @@ export function subscript(array, index) {
     kind: "SubscriptExpression",
     array,
     index,
-    type: array.type.baseType,
+    type: array.type,
   };
 }
 

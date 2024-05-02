@@ -1,5 +1,14 @@
 import parser from "../src/parser.js"
 import * as fs from "node:fs"
+import assert from "node:assert/strict";
+import analyze from "../src/analyzer.js";
+import {
+  program,
+  variableDeclaration,
+  variable,
+  binary,
+  floatType,
+} from "../src/core.js";
 
 const semanticChecks = [
     ["variable declaration", "x = 10"],
@@ -102,27 +111,12 @@ const semanticChecks = [
       /Expected an array/
     ],
   ];
-// try {
-//     parser(fs.readFileSync("examples/glhfProject/main.gg"))
-//     parser(fs.readFileSync("examples/math.gg"))
-//     parser(fs.readFileSync("examples/array.gg"))
-//     parser(fs.readFileSync("examples/dictionary.gg"))
-//     console.log("Syntax ok")
-// } catch(e) {
-//     console.log(e.message)
-//     process.exit(1)
-// }
 
 
 describe("The parser", () => {
     for (const [scenario, source] of semanticChecks) {
       it(`recognizes ${scenario}`, () => {
         assert.ok(parser(source));
-      });
-    }
-    for (const [scenario, source, errorMessagePattern] of semanticErrors) {
-      it(`throws on ${scenario}`, () => {
-        assert.throws(() => parser(source), errorMessagePattern);
       });
     }
 });

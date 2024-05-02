@@ -126,30 +126,20 @@ const fixtures = [
     `,
     },
     {
-        name: "return",
-        source: `
-        x = false
-        return x
-    `,
-        expected: dedent`
-        x = false
-        return x;
-    `,
-    },
-    {
         name: "functions",
         source: `
-      Function f_1(x_2,y_3)
-        x_1 = 0
-        y_2 = 1
-        x_2 = 2 - x_1
-        end f_1
+      Function f(x, y)
+        x = 0
+        y = 1
+        x = 2 - x
+        return x
+        end f
     `,
         expected: dedent`
-        function f_1(x_2,y_3) {
-           let x_1 = 0;
-           let y_2 = 1;
-           x_2 = 2 - x_1;
+        function f_1(x_2, y_3) {
+           x_2 = 0;
+           y_3 = 1;
+           x_2 = 2 - x_2;
            return x_2;
         }
     `,

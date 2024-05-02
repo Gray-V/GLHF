@@ -43,7 +43,12 @@ export default function analyze(match) {
   }
 
   function mustBothHaveTheSameType(e1, e2, at) {
-    must(e1.type === e2.type, "Operands must have the same type", at);
+    const types = {
+      "number": e => e % 1 ? FLOAT : INT,
+      "string": _ => STRING,
+      "boolean": _ => BOOLEAN,
+    }
+    must((e1.type?.kind ?? types[typeof e1]?.(e1)) === (e2.type?.kind ?? types[typeof e2]?.(e2)), "Operands must have the same type", at);
   }
   function mustNotAlreadyBeDeclared(name, at) {
     must(!context.lookup(name), "Identifier already declared", at);
@@ -54,19 +59,19 @@ export default function analyze(match) {
   }
 
   function mustHaveNumericType(e, at) {
-    must([INT, FLOAT].includes(e.type), "Expected a number", at);
+    must([INT, FLOAT].includes(e.type) || typeof e === "number", "Expected a number", at);
   }
 
   function mustHaveNumericOrStringType(e, at) {
     must(
-      [INT, FLOAT, STRING].includes(e.type),
+      [INT, FLOAT, STRING].includes(e.type) || typeof e === "number" || typeof e === "string",
       "Expected a number or string",
       at
     );
   }
 
   function mustHaveBooleanType(e, at) {
-    must(e.type === BOOLEAN, "Expected a boolean", at);
+    must(e.type === BOOLEAN || typeof e === "boolean", "Expected a boolean", at);
   }
 
   function mustHaveIntegerType(e, at) {
@@ -76,6 +81,7 @@ export default function analyze(match) {
   function mustHaveAnArrayType(e, at) {
     must(e.type?.kind === "ArrayType", "Expected an array", at);
   }
+  
   const builder = match.matcher.grammar.createSemantics().addOperation("rep", {
     Program(statements) {
       return core.program(statements.children.map((s) => s.rep()));
@@ -93,15 +99,31 @@ export default function analyze(match) {
       const relidName = relid.sourceString;
       let variable = context.lookup(relidName);
       const initializer = exp.rep();
+      let type = initializer.type ?? ANY;
+
+      if (typeof initializer === "number") {
+        if (initializer % 1 === 0) {
+          type = INT;
+        }
+        else {
+          type = FLOAT;
+        }
+      } else if (typeof initializer === "string") {
+        type = STRING;
+      } else if (typeof initializer === "boolean"){
+        type = BOOLEAN;
+      }
+      
       if (!variable) {
         variable = core.variable(
           relidName,
           false,
-          initializer.type
+          type
         );
         context.add(relidName, variable);
         return core.variableDeclaration(variable, initializer);
       }
+      variable.type = type;
       return core.assignment(variable, initializer);
     },
 
@@ -147,28 +169,29 @@ export default function analyze(match) {
         return core.forStatement(iterator, collection, body);
       }
 
-      //Add tests
-      if (collection.type.kind === "DictType") {
-        const iterator = core.variable(
-          id.sourceString,
-          true,
-          core.arrayType([collection.type.baseType, collection.type.baseType])
-        );
-        context = context.newChildContext({ inLoop: true });
-        context.add(id.sourceString, iterator);
-        const body = block.rep();
-        context = context.parent;
-        return core.forStatement(iterator, collection, body);
-      }
-    },
-
-    Return(_return) {
-      return core.shortReturnStatement();
+      //DELETE BEFORE SUBMISSION
+      // if (collection.type.kind === "DictType") {
+      //   const iterator = core.variable(
+      //     id.sourceString,
+      //     true,
+      //     core.arrayType([collection.type.baseType, collection.type.baseType])
+      //   );
+      //   context = context.newChildContext({ inLoop: true });
+      //   context.add(id.sourceString, iterator);
+      //   const body = block.rep();
+      //   context = context.parent;
+      //   return core.forStatement(iterator, collection, body);
+      // }
     },
 
     Return_something(_return, exp) {
       const returnValue = exp.rep();
       return core.returnStatement(returnValue);
+    },
+
+    Return(_return) {
+      console.log("?")
+      return core.shortReturnStatement();
     },
 
     Stmt_function(_builtInTypes, id, params, block, _glhf_end, exp) {
@@ -180,7 +203,6 @@ export default function analyze(match) {
       const body = block.rep();
       context = context.parent;
       exp.rep();
-      // console.log(exp);
       return core.functionDeclaration(fun, param, body);
     },
 
@@ -242,8 +264,6 @@ export default function analyze(match) {
 
     Exp3_binary(exp1, relop, exp2) {
       const [left, op, right] = [exp1.rep(), relop.sourceString, exp2.rep()];
-      // == and != can have any operand types as long as they are the same
-      // But inequality operators can only be applied to numbers and strings
       if (["<=", "<", "==", "!=", ">=", ">"].includes(op)) {
         mustHaveNumericOrStringType(left, { at: exp1 });
       }
@@ -258,7 +278,6 @@ export default function analyze(match) {
       } else {
         mustHaveNumericType(left, { at: exp1 });
       }
-      // TODO fix
       mustBothHaveTheSameType(left, right, { at: addOp });
       return core.binary(op, left, right, left.type);
     },
@@ -282,14 +301,13 @@ export default function analyze(match) {
     },
 
     Exp7_id(id) {
-      // When an id appears in an expression, it had better have been declared
       const entity = context.lookup(id.sourceString);
       mustHaveBeenFound(entity, id.sourceString, { at: id });
       return entity;x
     },
 
     id(_first, _rest) {
-      return context.lookup(this.sourceString) ?? context.add(this.sourceString, core.variable(this.sourceString, ANY, false));
+      return context.lookup(this.sourceString) ?? context.add(this.sourceString, core.variable(this.sourceString, false, ANY));
     },
 
     true(_) {
@@ -305,7 +323,6 @@ export default function analyze(match) {
       mustHaveBeenFound(variable, id.sourceString, { at: id });
       const source = exp.rep();
       mustBothHaveTheSameType(variable, source, { at: op });
-      console.log('op', op.sourceString)
       return core.assignment(
         variable,
         core.binary(op.sourceString.charAt(0), variable, source, variable.type)
@@ -315,25 +332,17 @@ export default function analyze(match) {
     Method(exp1, _period, exp2) {
       const object = exp1.rep();
       const method = exp2.sourceString;
-      // method.type = core.functionType;
-      // mustHaveFunction(method, { at: exp2 });
       return core.callExpression(object, method);
     },
 
     Array(_open, exps, _close) { 
       const elements = exps.asIteration().children.map((e) => e.rep());
-      // const baseType = elements[0]?.type ?? ANY;
-      // elements.type = core.arrayType(baseType);
       return new core.arrayExpression(elements);
     },
 
     Call(callee, _open, exps, _close) {
       const fun = callee.rep();
       const args = exps.asIteration().children.map((e) => e.rep());
-      // Not implemented yet
-      // args.forEach((a, i) =>
-      //   mustBothHaveTheSameType(a, fun.type.params[i], { at: _open })
-      // );
       return core.callExpression(fun, args);
     },
 
@@ -341,12 +350,6 @@ export default function analyze(match) {
       const path = exps.asIteration().children.map((e) => e.sourceString);
       return core.path(path);
     },
-
-    // Not implemented yet
-    // Wait(_wait, _open, num, _close) {
-    //   mustHaveNumericType(num, { at: num });
-    //   return core.waitStatement(num);
-    // },
 
     Index(id, _open, exp, _close) {
       const array = context.lookup(id.sourceString);

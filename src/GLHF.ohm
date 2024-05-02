@@ -10,13 +10,14 @@ GLHF {
          | OpAss													    
          | Print
          
+         
     Block      = Stmt* (break | Return | continue)*
     Enum_Block = ((num | id | Index | string | true | false | default) "->" Exp)*
     Ass        = (Index | id ) "=" Exp
     Params     = "(" ListOf<(Ass | id), ","> ")"
-    For        = for "(" Ass "," OpAss ")" Block glhf_end Exp 	          --increment
-    		   | for id in (id | Index) Block glhf_end for				  --iterable
-    Return     = return Exp 		                                      --something
+    For        = for "(" Ass "," OpAss ")" Block glhf_end Exp 	          -- increment
+    		   | for id in (id | Index) Block glhf_end for				  -- iterable
+    Return     = return Exp 		                                      -- something
     		   | return 	                                              
     
     Exp       = ("-" | "!") Exp6                                          -- unary
@@ -58,8 +59,6 @@ GLHF {
 	Array             = "[" ListOf<Exp, ","> "]"
     Dictionary        = "<<"  ListOf<Dictionary_format, ","> ">>"
     Dictionary_format = Exp ":" Exp
-
-
 
 	num           = digit+ ("." digit+)     -- float
                   | digit+                  -- int

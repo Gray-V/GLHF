@@ -2,7 +2,7 @@ import assert from "assert/strict"
 import optimize from "../src/optimizer.js"
 import * as core from "../src/core.js"
 
-// Make some test cases easier to read
+
 const x = new core.variable("x", false)
 // const token1 = Object.assign(new core.Token("Num", "1"), { value: 1 })
 // const tokenZ = Object.assign(new core.Token("Id", "z"), {
@@ -56,70 +56,28 @@ const tests = [
     ["removes right false from or", or(less(x, 1), false), less(x, 1)],
     ["removes left true from and", and(true, less(x, 1)), less(x, 1)],
     ["removes right true from and", and(less(x, 1), true), less(x, 1)],
-    ["return statement", return2],
-    ["short return statement", new core.shortReturnStatement()],
-    ["assignment statement" , new core.assignment(x, x)],
-    ["unary expression", new core.unary("-", 8)],
     [
         "removes x=x at beginning",
         [new core.assignment(x, x), return1p1],
         [return2],
     ],
-    // ["removes x=x at end", [return1p1, new core.assignment(x, x)], [return2]],
-    // [
-    //     "removes x=x in middle",
-    //     [return1p1, new core.assignment(x, x), return1p1],
-    //     [return2, return2],
-    // ],
-    // [
-    //     "optimizes elseif-true 2",
-    //     new core.IfStatement(
-    //         [false, true, true],
-    //         [returnX, return1p1, return2],
-    //         returnX
-    //     ),
-    //     return1p1,
-    // ],
-    // ["optimizes while-false", [new core.WhileLoop(false, x)], []],
+    ["removes x=x at end", [return1p1, new core.assignment(x, x)], [return2]],
+    [
+        "removes x=x in middle",
+        [return1p1, new core.assignment(x, x), return1p1],
+        [return2, return2],
+    ],
     // ["optimizes forLoop", [new core.ForLoop(x, 3, 2, [])], []],
     // [
     //     "optimizes for-empty-array",
     //     [new core.ForEachLoop(x, emptyArray, return2)],
     //     [],
     // ],
-    // [
-    //     "applies if-false after folding",
-    //     new core.IfStatement([eq(1, 2)], [return2], shortRetun),
-    //     shortRetun,
-    // ],
-    // [
-    //     "applies if-true after folding",
-    //     new core.IfStatement([eq(1, 1)], [return2], shortRetun),
-    //     return2,
-    // ],
-    // ["optimizes left conditional true", conditional(true, 55, 89), 55],
-    // ["optimizes left conditional false", conditional(false, 55, 89), 89],
     // ["optimizes in functions", intFun(return1p1), intFun(return2)],
     // [
     //     "optimizes object declaration",
     //     new core.ObjectDec("lmao", [and(true, less(x, 1)), 69]),
     //     new core.ObjectDec("lmao", [less(x, 1), 69]),
-    // ],
-    // [
-    //     "optimizes object method call",
-    //     new core.DotCall(
-    //         "varName",
-    //         new core.MethodDeclaration("name", [], [], "none")
-    //     ),
-    //     new core.DotCall(
-    //         "varName",
-    //         new core.MethodDeclaration("name", [], [], "none")
-    //     ),
-    // ],
-    // [
-    //     "optimizes through maps",
-    //     map(new core.MapEntry(onePlusTwo, and(true, less(x, 1)))),
-    //     map(new core.MapEntry(3, less(x, 1))),
     // ],
     // ["optimizes in subscripts", sub(x, onePlusTwo), sub(x, 3)],
     // ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
@@ -130,7 +88,7 @@ console.log(core.assignment(x, x))
 describe("The optimizer", () => {
     for (const [scenario, before, after] of tests) {
         it(`${scenario}`, () => {
-            assert.deepEqual(optimize(before), after)
+            assert.deepEqual(optimize(core.program(before.constructor === Array ? before : [before])), core.program(before.constructor === Array ? after : [after]))
         })
     }
 })

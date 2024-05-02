@@ -18,10 +18,6 @@ export function variable(name, readOnly, type) {
   return { kind: "Variable", name, readOnly, type };
 }
 
-// export function typeDeclaration(type) {
-//   return { kind: "TypeDeclaration", type };
-// }
-
 export const boolType = { kind: "BoolType" };
 export const intType = { kind: "IntType" };
 export const floatType = { kind: "FloatType" };
@@ -29,13 +25,6 @@ export const stringType = { kind: "StringType" };
 export const voidType = { kind: "VoidType" };
 export const anyType = { kind: "AnyType" };
 
-// export function structType(name, fields) {
-//   return { kind: "StructType", name, fields };
-// }
-
-// export function field(name, type) {
-//   return { kind: "Field", name, type };
-// }
 
 export function functionDeclaration(fun, params, body) {
   return { kind: "FunctionDeclaration", fun, params, body };
@@ -77,15 +66,6 @@ export function enumStatement(test, consequent, alternate) {
   return { kind: "EnumStatement", test, consequent, alternate };
 }
 
-// export function enumBaselessStatement(test, consequent) {
-//   return { kind: "EnumBaselessStatement", test, consequent };
-// }
-
-// Not implemented yet
-// export function waitStatement(count) {
-//   return { kind: "WaitStatement", count };
-// }
-
 export function forStatement(iterator, collection, body) {
   return { kind: "ForStatement", iterator, collection, body };
 }
@@ -106,10 +86,6 @@ export function unary(op, operand, type) {
   return { kind: "UnaryExpression", op, operand, type };
 }
 
-// export function emptyOptional(baseType) {
-//   return { kind: "EmptyOptional", baseType, type: optionalType(baseType) };
-// }
-
 export function subscript(array, index) {
   return {
     kind: "SubscriptExpression",
@@ -123,25 +99,10 @@ export function arrayExpression(elements) {
   return { kind: "ArrayExpression", elements, type: arrayType(anyType) };
 }
 
-// export function dictExpression(elements) {
-//   return { kind: "DictExpression", elements, type: dictType(anyType) };
-// }
-
-// export function emptyArray() {
-//   return { kind: "EmptyArray", type: baseType };
-// }
-
-// export function memberExpression(object, op, field) {
-//   return { kind: "MemberExpression", object, op, field, type: field.type };
-// }
-
 export function callExpression(callee, args) {
   return { kind: "FunctionCall", callee, args, type: callee.type };
 }
 
-// export function constructorCall(callee, args) {
-//   return { kind: "ConstructorCall", callee, args, type: callee };
-// }
 
 export function path(path) {
   return { kind: "Path", path, type: arrayType(stringType) };
@@ -151,7 +112,6 @@ export function print(print) {
   return { kind: "Print", print };
 }
 
-// These local constants are used to simplify the standard library definitions.
 const floatToFloatType = functionType([floatType], floatType);
 const floatFloatToFloatType = functionType([floatType, floatType], floatType);
 const stringToIntsType = functionType([stringType], arrayType(intType));
@@ -175,10 +135,7 @@ export const standardLibrary = Object.freeze({
   codepoints: fun("codepoints", stringToIntsType),
 });
 
-// We want every expression to have a type property. But we aren't creating
-// special entities for numbers, strings, and booleans; instead, we are
-// just using JavaScript values for those. Fortunately we can monkey patch
-// the JS classes for these to give us what we want.
+
 String.prototype.type = stringType;
 Number.prototype.type = floatType;
 BigInt.prototype.type = intType;

@@ -81,11 +81,6 @@ const semanticErrors = [
     /Operands must have the same type/,
   ],
   [
-    "must not have already been declared",
-    "x = 1 \n x = 2",
-    /Identifier already declared/,
-  ],
-  [
     "must have a numeric type",
     "x = 'hi' - 'hi'",
     /Expected a number/,

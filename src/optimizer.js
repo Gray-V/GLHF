@@ -1,8 +1,6 @@
 import * as core from "./core.js"
 
 export default function optimize(node) {
-    // console.log("Node constructor name:", node.constructor.name);
-    // console.log(node)
     return optimizers[node.kind]?.(node) ?? node
 }
 const optimizers = {

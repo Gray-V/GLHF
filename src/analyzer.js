@@ -100,8 +100,7 @@ export default function analyze(match) {
       let variable = context.lookup(relidName);
       const initializer = exp.rep();
       let type = initializer.type ?? ANY;
-
-      if (typeof initializer === "number") {
+      if (typeof initializer === "int" || typeof initializer === "float") {
         if (initializer % 1 === 0) {
           type = INT;
         }
@@ -185,13 +184,11 @@ export default function analyze(match) {
     },
 
     Return_something(_return, exp) {
-      console.log(exp.rep())
       const returnValue = exp.rep();
       return core.returnStatement(returnValue);
     },
 
-    Return(_return) {
-      console.log("?")
+    Return_short(_return) {
       return core.shortReturnStatement();
     },
 

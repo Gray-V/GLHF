@@ -99,9 +99,9 @@ export default function generate(program) {
     },
 
     //TODO DELETE BEFORE SUBMISSION
-    ArrayExpression(e){
-      return `[${gen(e.elements).join(",")}]`;
-    },
+    // ArrayExpression(e){
+    //   return `[${gen(e.elements).join(",")}]`;
+    // },
     //TODO
     // Path(c){
     //   let targetCode = `${targetName(c.object)}.${targetName(

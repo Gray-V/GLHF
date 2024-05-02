@@ -18,7 +18,7 @@ GLHF {
     For        = for "(" Ass "," OpAss ")" Block glhf_end Exp 	          -- increment
     		   | for id in (id | Index) Block glhf_end for				  -- iterable
     Return     = return Exp 		                                      -- something
-    		   | return
+    		   | return                                                   -- short
     
     Exp       = ("-" | "!") Exp6                                          -- unary
               | Exp1 "?" Exp1 ":" Exp                                     -- ternary

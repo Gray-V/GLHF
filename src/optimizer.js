@@ -1,11 +1,15 @@
 import * as core from "./core.js"
 
 export default function optimize(node) {
-    // console.log("Node constructor name:", node.constructor.name);
-    // console.log(node)
+    console.log("Node constructor name:", node.constructor.name);
+    console.log(node)
     return optimizers[node.kind]?.(node) ?? node
 }
 const optimizers = {
+    Program(p) {
+        p.statements = p.statements.flatMap(optimize);
+        return p;
+    },
     VariableDeclaration(d) {
         d.variable = optimize(d.variable)
         d.initializer = optimize(d.initializer)
@@ -15,7 +19,12 @@ const optimizers = {
         e.op = optimize(e.op)
         e.left = optimize(e.left)
         e.right = optimize(e.right)
-        if (e.op === "&&") {
+        if (e.op === "??") {
+          // Coalesce empty optional unwraps
+          if (e.left?.kind === "EmptyOptional") {
+            return e.right
+          }
+        } else if (e.op === "&&") {
           // Optimize boolean constants in && and ||
           if (e.left === true) return e.right
           if (e.right === true) return e.left
@@ -63,6 +72,8 @@ const optimizers = {
         return e
       },
       Assignment(s) {
+        console.log("hello")
+        console.log(s.source)
         s.source = optimize(s.source)
         s.target = optimize(s.target)
         if (s.source === s.target) {
@@ -76,5 +87,14 @@ const optimizers = {
       },
       ShortReturnStatement(s) {
         return s
+      },
+      FunctionDeclaration(d) {
+        d.fun = optimize(d.fun)
+        if (d.body.statements) d.body.statements = d.body.statements.flatMap(optimize)
+        return d
+      },
+      ArrayExpression(e) {
+        e.elements = e.elements.map(optimize)
+        return e
       },
 }

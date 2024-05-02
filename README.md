@@ -1,5 +1,5 @@
 
-## GLHF (Good Language Have Functions)
+## [GLHF (Good Language Have Functions)](https://gray-v.github.io/GLHF/)
 
 <img src="docs/logo.png" alt="drawing" width="200"/>
 

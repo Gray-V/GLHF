@@ -97,5 +97,4 @@ const optimizers = {
         e.elements = e.elements.map(optimize)
         return e
       },
-      
 }

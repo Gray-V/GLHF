@@ -56,11 +56,15 @@ const tests = [
     ["removes right false from or", or(less(x, 1), false), less(x, 1)],
     ["removes left true from and", and(true, less(x, 1)), less(x, 1)],
     ["removes right true from and", and(less(x, 1), true), less(x, 1)],
-    // [
-    //     "removes x=x at beginning",
-    //     [new core.assignment(x, x), return1p1],
-    //     [return2],
-    // ],
+    ["return statement", return2],
+    ["short return statement", new core.shortReturnStatement()],
+    ["assignment statement" , new core.assignment(x, x)],
+    ["unary expression", new core.unary("-", 8)],
+    [
+        "removes x=x at beginning",
+        [new core.assignment(x, x), return1p1],
+        [return2],
+    ],
     // ["removes x=x at end", [return1p1, new core.assignment(x, x)], [return2]],
     // [
     //     "removes x=x in middle",

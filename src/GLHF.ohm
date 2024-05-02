@@ -8,8 +8,7 @@ GLHF {
          | Call														    
          | Method 													    
          | OpAss													    
-         | Print														
-
+         | Print
          
     Block      = Stmt* (break | Return | continue)*
     Enum_Block = ((num | id | Index | string | true | false | default) "->" Exp)*
@@ -89,5 +88,4 @@ GLHF {
     id            = ~keyword letter idchar*
     space        +=  "---" (~"---" any)* "---"                             --multiline_comment
     		      |"--" (~("--" | "\n") any)*                              -- comment
-
 }

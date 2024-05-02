@@ -4,27 +4,17 @@ import * as core from "../src/core.js"
 
 
 const x = new core.variable("x", false)
-// const token1 = Object.assign(new core.Token("Num", "1"), { value: 1 })
-// const tokenZ = Object.assign(new core.Token("Id", "z"), {
-//     value: "z",
-// })
 const return1p1 = new core.returnStatement(new core.binary("+", 1, 1))
 const return2 = new core.returnStatement(2)
-const returnX = new core.returnStatement(x)
 const onePlusTwo = new core.binary("+", 1, 2)
-const identity = Object.assign(new core.functionDeclaration("id"), { body: returnX })
 const intFun = (body) => new core.functionDeclaration("f", [], "int", body)
-const callIdentity = (args) => new core.variableDeclaration(identity, args)
 const or = (...d) => d.reduce((x, y) => new core.binary("||", x, y))
 const and = (...c) => c.reduce((x, y) => new core.binary("&&", x, y))
 const less = (x, y) => new core.binary("<", x, y)
-const eq = (x, y) => new core.binary("==", x, y)
 const times = (x, y) => new core.binary("*", x, y)
 const neg = (x) => new core.unary("-", x)
 const array = (...elements) => new core.arrayExpression(elements)
-const map = (...entries) => new core.dictExpression(entries)
-// const sub = (a, e) => new core.SubscriptExpression(a, e)
-// const conditional = (x, y, z) => new core.Conditional(x, y, z)
+const sub = (a, e) => new core.subscript(a, e)
 
 const tests = [
     ["folds +", new core.binary("+", 5, 8), 13],
@@ -67,21 +57,11 @@ const tests = [
         [return1p1, new core.assignment(x, x), return1p1],
         [return2, return2],
     ],
-    // ["optimizes forLoop", [new core.ForLoop(x, 3, 2, [])], []],
-    // [
-    //     "optimizes for-empty-array",
-    //     [new core.ForEachLoop(x, emptyArray, return2)],
-    //     [],
-    // ],
-    // ["optimizes in functions", intFun(return1p1), intFun(return2)],
-    // [
-    //     "optimizes object declaration",
-    //     new core.ObjectDec("lmao", [and(true, less(x, 1)), 69]),
-    //     new core.ObjectDec("lmao", [less(x, 1), 69]),
-    // ],
-    // ["optimizes in subscripts", sub(x, onePlusTwo), sub(x, 3)],
-    // ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
-    ["optimizes in arguments", callIdentity([times(3, 5)]), callIdentity([15])],
+    ["optimizes forLoop", [new core.forRangeStatement(x, 3, 2, new core.block([]))], []],
+    ["optimizes in functions", intFun(return1p1), intFun(return2)],
+    ["optimizes in subscripts", sub(x, onePlusTwo), sub(x, 3)],
+    ["optimizes in array literals", array(0, onePlusTwo, 9), array(0, 3, 9)],
+    ["optimizes in arguments", core.callExpression(core.fun("f", "any"), [times(3, 5)]), core.callExpression(core.fun("f", "any"), [15])],
 ]
 console.log(core.assignment(x, x))
 

@@ -185,6 +185,7 @@ export default function analyze(match) {
     },
 
     Return_something(_return, exp) {
+      console.log(exp.rep())
       const returnValue = exp.rep();
       return core.returnStatement(returnValue);
     },

@@ -11,7 +11,6 @@ const optimizers = {
         return p;
     },
     VariableDeclaration(d) {
-        d.variable = optimize(d.variable)
         d.initializer = optimize(d.initializer)
         return d
       },
@@ -82,13 +81,31 @@ const optimizers = {
       },
       FunctionCall(c) {
         c.callee = optimize(c.callee)
-        console.log(c)
-        c.args = c.args.flatMap(optimize)
+        c.args = c.args.map(optimize)
         return c
       },
       //TODO DELETE BEFORE SUBMISSION
-      // ArrayExpression(e) {
-      //   e.elements = e.elements.map(optimize)
-      //   return e
-      // },
+      ArrayExpression(e) {
+        e.elements = e.elements.map(optimize)
+        return e
+      },
+      SubscriptExpression(e) {
+        e.array = optimize(e.array)
+        e.index = optimize(e.index)
+        return e
+      },
+      ForRangeStatement(s) {
+        s.iterator = optimize(s.iterator)
+        s.low = optimize(s.low)
+        s.high = optimize(s.high)
+        s.body.statements = s.body.statements.flatMap(optimize)
+        if (s.low.constructor === Number) {
+          if (s.high.constructor === Number) {
+            if (s.low > s.high) {
+              return []
+            }
+          }
+        }
+        return s
+      },
 }
